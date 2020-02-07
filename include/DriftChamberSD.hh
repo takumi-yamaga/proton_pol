@@ -24,64 +24,34 @@
 // ********************************************************************
 //
 //
-/// \file B5DetectorConstruction.hh
-/// \brief Definition of the B5DetectorConstruction class
+/// \copied from B5DriftChamberSD.hh
+/// \brief Definition of the DriftChamberSD class
 
-#ifndef B5DetectorConstruction_h
-#define B5DetectorConstruction_h 1
+#ifndef DriftChamberSD_h
+#define DriftChamberSD_h 1
 
-#include "globals.hh"
-#include "G4VUserDetectorConstruction.hh"
-#include "G4RotationMatrix.hh"
-#include "G4FieldManager.hh"
+#include "G4VSensitiveDetector.hh"
 
-#include <vector>
+#include "DriftChamberHit.hh"
 
-class B5MagneticField;
+class G4Step;
+class G4HCofThisEvent;
+class G4TouchableHistory;
 
-class G4VPhysicalVolume;
-class G4Material;
-class G4VSensitiveDetector;
-class G4VisAttributes;
-class G4GenericMessenger;
+/// Drift chamber sensitive detector
 
-/// Detector construction
-
-class B5DetectorConstruction : public G4VUserDetectorConstruction
+class DriftChamberSD : public G4VSensitiveDetector
 {
   public:
-    B5DetectorConstruction();
-    virtual ~B5DetectorConstruction();
+    DriftChamberSD(G4String name);
+    virtual ~DriftChamberSD();
     
-    virtual G4VPhysicalVolume* Construct();
-    virtual void ConstructSDandField();
-
-    void SetArmAngle(G4double val);
-    G4double GetArmAngle() { return fArmAngle; }
-    
-    void ConstructMaterials();
+    virtual void Initialize(G4HCofThisEvent*HCE);
+    virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
     
   private:
-    void DefineCommands();
-
-    G4GenericMessenger* fMessenger;
-    
-    static G4ThreadLocal B5MagneticField* fMagneticField;
-    static G4ThreadLocal G4FieldManager* fFieldMgr;
-    
-    G4LogicalVolume* fHodoscope1Logical;
-    G4LogicalVolume* fHodoscope2Logical;
-    G4LogicalVolume* fWirePlane1Logical;
-    G4LogicalVolume* fWirePlane2Logical;
-    G4LogicalVolume* fCellLogical;
-    G4LogicalVolume* fHadCalScintiLogical;
-    G4LogicalVolume* fMagneticLogical;
-    
-    std::vector<G4VisAttributes*> fVisAttributes;
-    
-    G4double fArmAngle;
-    G4RotationMatrix* fArmRotation;
-    G4VPhysicalVolume* fSecondArmPhys;
+    DriftChamberHitsCollection* fHitsCollection;
+    G4int fHCID;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

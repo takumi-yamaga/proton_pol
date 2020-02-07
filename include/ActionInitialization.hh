@@ -24,21 +24,21 @@
 // ********************************************************************
 //
 //
-/// \file B5ActionInitialization.hh
-/// \brief Definition of the B5ActionInitialization class
+/// \copied from  B5ActionInitialization.hh
+/// \brief Definition of the ActionInitialization class
 
-#ifndef B5ActionInitialization_h
-#define B5ActionInitialization_h 1
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
 
 #include "G4VUserActionInitialization.hh"
 
 /// Action initialization class.
 
-class B5ActionInitialization : public G4VUserActionInitialization
+class ActionInitialization : public G4VUserActionInitialization
 {
   public:
-    B5ActionInitialization();
-    virtual ~B5ActionInitialization();
+    ActionInitialization();
+    virtual ~ActionInitialization();
 
     virtual void BuildForMaster() const;
     virtual void Build() const;

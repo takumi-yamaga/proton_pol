@@ -24,11 +24,11 @@
 // ********************************************************************
 //
 //
-/// \file exampleB5.cc
-/// \brief Main program of the analysis/B5 example
+/// \file proton_pol.cc
+/// \brief Main program of proton_pol
 
-#include "B5DetectorConstruction.hh"
-#include "B5ActionInitialization.hh"
+#include "DetectorConstruction.hh"
+#include "ActionInitialization.hh"
 
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
@@ -63,14 +63,14 @@ int main(int argc,char** argv)
 #endif
 
   // Mandatory user initialization classes
-  runManager->SetUserInitialization(new B5DetectorConstruction);
+  runManager->SetUserInitialization(new DetectorConstruction);
 
   auto physicsList = new FTFP_BERT;
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());
   runManager->SetUserInitialization(physicsList);
 
   // User action initialization
-  runManager->SetUserInitialization(new B5ActionInitialization());
+  runManager->SetUserInitialization(new ActionInitialization());
 
   // Visualization manager construction
   auto visManager = new G4VisExecutive;

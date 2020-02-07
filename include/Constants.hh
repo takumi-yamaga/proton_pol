@@ -24,36 +24,22 @@
 // ********************************************************************
 //
 //
-/// \file B5DriftChamberSD.hh
-/// \brief Definition of the B5DriftChamberSD class
+/// \copied from B5Constants.hh
+/// \brief Definition of constants.
 
-#ifndef B5DriftChamberSD_h
-#define B5DriftChamberSD_h 1
+#ifndef Constants_h
+#define Constants_h 1
 
-#include "G4VSensitiveDetector.hh"
+#include "globals.hh"
 
-#include "B5DriftChamberHit.hh"
-
-class G4Step;
-class G4HCofThisEvent;
-class G4TouchableHistory;
-
-/// Drift chamber sensitive detector
-
-class B5DriftChamberSD : public G4VSensitiveDetector
-{
-  public:
-    B5DriftChamberSD(G4String name);
-    virtual ~B5DriftChamberSD();
-    
-    virtual void Initialize(G4HCofThisEvent*HCE);
-    virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
-    
-  private:
-    B5DriftChamberHitsCollection* fHitsCollection;
-    G4int fHCID;
-};
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+constexpr G4int kNofHodoscopes1 = 15;
+constexpr G4int kNofHodoscopes2 = 25;
+constexpr G4int kNofChambers = 5;
+constexpr G4int kNofEmColumns = 20;
+constexpr G4int kNofEmRows = 4;
+constexpr G4int kNofEmCells = kNofEmColumns * kNofEmRows;
+constexpr G4int kNofHadColumns = 10;
+constexpr G4int kNofHadRows = 2;
+constexpr G4int kNofHadCells = kNofHadColumns * kNofHadRows;
 
 #endif

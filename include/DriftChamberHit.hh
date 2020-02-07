@@ -24,11 +24,11 @@
 // ********************************************************************
 //
 //
-/// \file B5HodoscopeHit.hh
-/// \brief Definition of the B5HodoscopeHit class
+/// \copied from B5DriftChamberHit.hh
+/// \brief Definition of the DriftChamberHit class
 
-#ifndef B5HodoscopeHit_h
-#define B5HodoscopeHit_h 1
+#ifndef DriftChamberHit_h
+#define DriftChamberHit_h 1
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
@@ -41,68 +41,66 @@
 class G4AttDef;
 class G4AttValue;
 
-/// Hodoscope hit
+/// Drift chamber hit
 ///
 /// It records:
-/// - the strip ID
+/// - the layer ID
 /// - the particle time
-/// - the strip logical volume, its position and rotation
+/// - the particle local and global positions
 
-class B5HodoscopeHit : public G4VHit
+class DriftChamberHit : public G4VHit
 {
   public:
-    B5HodoscopeHit(G4int i,G4double t);
-    B5HodoscopeHit(const B5HodoscopeHit &right);
-    virtual ~B5HodoscopeHit();
+    DriftChamberHit();
+    DriftChamberHit(G4int layerID);
+    DriftChamberHit(const DriftChamberHit &right);
+    virtual ~DriftChamberHit();
 
-    const B5HodoscopeHit& operator=(const B5HodoscopeHit &right);
-    G4bool operator==(const B5HodoscopeHit &right) const;
+    const DriftChamberHit& operator=(const DriftChamberHit &right);
+    G4bool operator==(const DriftChamberHit &right) const;
     
     inline void *operator new(size_t);
-    inline void operator delete(void*aHit);
+    inline void operator delete(void *aHit);
     
-    void Draw();
+    virtual void Draw();
     virtual const std::map<G4String,G4AttDef>* GetAttDefs() const;
     virtual std::vector<G4AttValue>* CreateAttValues() const;
-    void Print();
-    
-    G4int GetID() const { return fId; }
+    virtual void Print();
 
-    void SetTime(G4double val) { fTime = val; }
+    void SetLayerID(G4int z) { fLayerID = z; }
+    G4int GetLayerID() const { return fLayerID; }
+
+    void SetTime(G4double t) { fTime = t; }
     G4double GetTime() const { return fTime; }
 
-    void SetPos(G4ThreeVector xyz) { fPos = xyz; }
-    G4ThreeVector GetPos() const { return fPos; }
+    void SetLocalPos(G4ThreeVector xyz) { fLocalPos = xyz; }
+    G4ThreeVector GetLocalPos() const { return fLocalPos; }
 
-    void SetRot(G4RotationMatrix rmat) { fRot = rmat; }
-    G4RotationMatrix GetRot() const { return fRot; }
-
-    void SetLogV(G4LogicalVolume* val) { fPLogV = val; }
-    const G4LogicalVolume* GetLogV() const { return fPLogV; }
+    void SetWorldPos(G4ThreeVector xyz) { fWorldPos = xyz; }
+    G4ThreeVector GetWorldPos() const { return fWorldPos; }
     
   private:
-    G4int fId;
+    G4int fLayerID;
     G4double fTime;
-    G4ThreeVector fPos;
-    G4RotationMatrix fRot;
-    const G4LogicalVolume* fPLogV;
+    G4ThreeVector fLocalPos;
+    G4ThreeVector fWorldPos;
 };
 
-using B5HodoscopeHitsCollection = G4THitsCollection<B5HodoscopeHit>;
+using DriftChamberHitsCollection = G4THitsCollection<DriftChamberHit>;
 
-extern G4ThreadLocal G4Allocator<B5HodoscopeHit>* B5HodoscopeHitAllocator;
+extern G4ThreadLocal G4Allocator<DriftChamberHit>* DriftChamberHitAllocator;
 
-inline void* B5HodoscopeHit::operator new(size_t)
+inline void* DriftChamberHit::operator new(size_t)
 {
-  if (!B5HodoscopeHitAllocator) {
-       B5HodoscopeHitAllocator = new G4Allocator<B5HodoscopeHit>;
+  if (!DriftChamberHitAllocator) {
+       DriftChamberHitAllocator = new G4Allocator<DriftChamberHit>;
   }
-  return (void*)B5HodoscopeHitAllocator->MallocSingle();
+  return (void*)DriftChamberHitAllocator->MallocSingle();
 }
 
-inline void B5HodoscopeHit::operator delete(void*aHit)
+inline void DriftChamberHit::operator delete(void* aHit)
 {
-  B5HodoscopeHitAllocator->FreeSingle((B5HodoscopeHit*) aHit);
+  DriftChamberHitAllocator->FreeSingle((DriftChamberHit*) aHit);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

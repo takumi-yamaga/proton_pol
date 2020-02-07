@@ -24,55 +24,65 @@
 // ********************************************************************
 //
 //
-/// \file B5MagneticField.cc
-/// \brief Implementation of the B5MagneticField class
+/// \copied from B5PrimaryGeneratorAction.hh
+/// \brief Definition of the PrimaryGeneratorAction class
 
-#include "B5MagneticField.hh"
+#ifndef PrimaryGeneratorAction_h
+#define PrimaryGeneratorAction_h 1
 
-#include "G4GenericMessenger.hh"
-#include "G4SystemOfUnits.hh"
+#include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+class G4ParticleGun;
+class G4GenericMessenger;
+class G4Event;
+class G4ParticleDefinition;
 
-B5MagneticField::B5MagneticField()
-: G4MagneticField(), 
-  fMessenger(nullptr), fBy(1.0*tesla)
+/// Primary generator
+///
+/// A single particle is generated.
+/// User can select 
+/// - the initial momentum and angle
+/// - the momentum and angle spreads
+/// - random selection of a particle type from proton, kaon+, pi+, muon+, e+ 
+
+
+class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
-  // define commands for this class
-  DefineCommands();
-}
+  public:
+    PrimaryGeneratorAction();
+    virtual ~PrimaryGeneratorAction();
+    
+    virtual void GeneratePrimaries(G4Event*);
+    
+    void SetMomentum(G4double val) { fMomentum = val; }
+    G4double GetMomentum() const { return fMomentum; }
+
+    void SetSigmaMomentum(G4double val) { fSigmaMomentum = val; }
+    G4double GetSigmaMomentum() const { return fSigmaMomentum; }
+
+    void SetSigmaAngle(G4double val) { fSigmaAngle = val; }
+    G4double GetSigmaAngle() const { return fSigmaAngle; }
+
+    void SetRandomize(G4bool val) { fRandomizePrimary = val; }
+    G4bool GetRandomize() const { return fRandomizePrimary; }
+    
+  private:
+    void DefineCommands();
+
+    G4ParticleGun* fParticleGun;
+    G4GenericMessenger* fMessenger;
+    G4ParticleDefinition* fPositron;
+    G4ParticleDefinition* fMuon;
+    G4ParticleDefinition* fPion;
+    G4ParticleDefinition* fKaon;
+    G4ParticleDefinition* fProton;
+    G4double fMomentum;
+    G4double fSigmaMomentum;
+    G4double fSigmaAngle;
+    G4bool fRandomizePrimary;
+};
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5MagneticField::~B5MagneticField()
-{ 
-  delete fMessenger; 
-}
-
-void B5MagneticField::GetFieldValue(const G4double [4],double *bField) const
-{
-  bField[0] = 0.;
-  bField[1] = fBy;
-  bField[2] = 0.;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void B5MagneticField::DefineCommands()
-{
-  // Define /B5/field command directory using generic messenger class
-  fMessenger = new G4GenericMessenger(this, 
-                                      "/B5/field/", 
-                                      "Field control");
-
-  // fieldValue command 
-  auto& valueCmd
-    = fMessenger->DeclareMethodWithUnit("value","tesla",
-                                &B5MagneticField::SetField, 
-                                "Set field strength.");
-  valueCmd.SetParameterName("field", true);
-  valueCmd.SetDefaultValue("1.");
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#endif

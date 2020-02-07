@@ -24,76 +24,40 @@
 // ********************************************************************
 //
 //
-/// \file B5EmCalorimeterSD.cc
-/// \brief Implementation of the B5EmCalorimeterSD class
+/// \copied from B5CellParameterisation.cc
+/// \brief Implementation of the CellParameterisation class
 
-#include "B5EmCalorimeterSD.hh"
-#include "B5EmCalorimeterHit.hh"
-#include "B5Constants.hh"
+#include "CellParameterisation.hh"
+#include "Constants.hh"
 
-#include "G4HCofThisEvent.hh"
-#include "G4TouchableHistory.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4SDManager.hh"
-#include "G4ios.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4ThreeVector.hh"
+#include "G4SystemOfUnits.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5EmCalorimeterSD::B5EmCalorimeterSD(G4String name)
-: G4VSensitiveDetector(name), 
-  fHitsCollection(nullptr), fHCID(-1)
+CellParameterisation::CellParameterisation()
+: G4VPVParameterisation()
 {
-  collectionName.insert("EMcalorimeterColl");
+  for (auto copyNo=0; copyNo<kNofEmCells; copyNo++) {
+    auto column = copyNo / kNofEmRows ;
+    auto row = copyNo % kNofEmRows;
+    fXCell[copyNo] = (column-9)*15.*cm - 7.5*cm;
+    fYCell[copyNo] = (row-1)*15*cm - 7.5*cm;
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5EmCalorimeterSD::~B5EmCalorimeterSD()
+CellParameterisation::~CellParameterisation()
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5EmCalorimeterSD::Initialize(G4HCofThisEvent* hce)
+void CellParameterisation::ComputeTransformation(
+       const G4int copyNo,G4VPhysicalVolume *physVol) const
 {
-  fHitsCollection 
-    = new B5EmCalorimeterHitsCollection(SensitiveDetectorName,collectionName[0]);
-  if (fHCID<0) {
-    fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection); 
-  }
-  hce->AddHitsCollection(fHCID,fHitsCollection);
-  
-  // fill calorimeter hits with zero energy deposition
-  for (auto i=0;i<kNofEmCells;i++) {
-    fHitsCollection->insert(new B5EmCalorimeterHit(i));
-  }
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4bool B5EmCalorimeterSD::ProcessHits(G4Step*step, G4TouchableHistory*)
-{
-  auto edep = step->GetTotalEnergyDeposit();
-  if (edep==0.) return true;
-  
-  auto touchable = step->GetPreStepPoint()->GetTouchable();
-  auto physical = touchable->GetVolume();
-  auto copyNo = physical->GetCopyNo();
-  
-  auto hit = (*fHitsCollection)[copyNo];
-  // check if it is first touch
-  if (!(hit->GetLogV())) {
-    // fill volume information
-    hit->SetLogV(physical->GetLogicalVolume());
-    G4AffineTransform transform = touchable->GetHistory()->GetTopTransform();
-    transform.Invert();
-    hit->SetRot(transform.NetRotation());
-    hit->SetPos(transform.NetTranslation());
-  }
-  // add energy deposition
-  hit->AddEdep(edep);
-  
-  return true;
+  physVol->SetTranslation(G4ThreeVector(fXCell[copyNo],fYCell[copyNo],0.));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -24,37 +24,43 @@
 // ********************************************************************
 //
 //
-/// \file B5MagneticField.hh
-/// \brief Definition of the B5MagneticField class
+/// \copied from B5ActionInitialization.cc
+/// \brief Implementation of the ActionInitialization class
 
-#ifndef B5MagneticField_H
-#define B5MagneticField_H 1
-
-#include "globals.hh"
-#include "G4MagneticField.hh"
-
-class G4GenericMessenger;
-
-/// Magnetic field
-
-class B5MagneticField : public G4MagneticField
-{
-  public:
-    B5MagneticField();
-    virtual ~B5MagneticField();
-    
-    virtual void GetFieldValue(const G4double point[4],double* bField ) const;
-    
-    void SetField(G4double val) { fBy = val; }
-    G4double GetField() const { return fBy; }
-    
-  private:
-    void DefineCommands();
-
-    G4GenericMessenger* fMessenger;
-    G4double fBy;
-};
+#include "ActionInitialization.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+ActionInitialization::ActionInitialization()
+ : G4VUserActionInitialization()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+ActionInitialization::~ActionInitialization()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void ActionInitialization::BuildForMaster() const
+{
+  EventAction* eventAction = new EventAction;
+  SetUserAction(new RunAction(eventAction));
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void ActionInitialization::Build() const
+{
+  SetUserAction(new PrimaryGeneratorAction);
+
+  auto eventAction = new EventAction;
+  SetUserAction(eventAction);
+
+  SetUserAction(new RunAction(eventAction));
+}  
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

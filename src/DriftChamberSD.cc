@@ -24,11 +24,11 @@
 // ********************************************************************
 //
 //
-/// \file B5HodoscopeSD.cc
-/// \brief Implementation of the B5HodoscopeSD class
+/// \copied from B5DriftChamberSD.cc
+/// \brief Implementation of the DriftChamber class
 
-#include "B5HodoscopeSD.hh"
-#include "B5HodoscopeHit.hh"
+#include "DriftChamberSD.hh"
+#include "DriftChamberHit.hh"
 
 #include "G4HCofThisEvent.hh"
 #include "G4TouchableHistory.hh"
@@ -39,68 +39,55 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5HodoscopeSD::B5HodoscopeSD(G4String name)
+DriftChamberSD::DriftChamberSD(G4String name)
 : G4VSensitiveDetector(name), 
   fHitsCollection(nullptr), fHCID(-1)
 {
-  collectionName.insert( "hodoscopeColl");
+  collectionName.insert("driftChamberColl");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5HodoscopeSD::~B5HodoscopeSD()
+DriftChamberSD::~DriftChamberSD()
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5HodoscopeSD::Initialize(G4HCofThisEvent* hce)
+void DriftChamberSD::Initialize(G4HCofThisEvent* hce)
 {
-  fHitsCollection = new B5HodoscopeHitsCollection
-  (SensitiveDetectorName,collectionName[0]);
+  fHitsCollection 
+    = new DriftChamberHitsCollection(SensitiveDetectorName,collectionName[0]);
+
   if (fHCID<0) { 
-    fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection); 
+     fHCID = G4SDManager::GetSDMpointer()->GetCollectionID(fHitsCollection); 
   }
   hce->AddHitsCollection(fHCID,fHitsCollection);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4bool B5HodoscopeSD::ProcessHits(G4Step* step, G4TouchableHistory*)
+G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
-  auto edep = step->GetTotalEnergyDeposit();
-  if (edep==0.) return true;
+  auto charge = step->GetTrack()->GetDefinition()->GetPDGCharge();
+  if (charge==0.) return true;
   
   auto preStepPoint = step->GetPreStepPoint();
-  auto touchable = preStepPoint->GetTouchable();
-  auto copyNo = touchable->GetVolume()->GetCopyNo();
-  auto hitTime = preStepPoint->GetGlobalTime();
-  
-  // check if this finger already has a hit
-  auto ix = -1;
-  for (auto i=0;i<fHitsCollection->entries();i++) {
-    if ((*fHitsCollection)[i]->GetID()==copyNo) {
-      ix = i;
-      break;
-    }
-  }
 
-  if (ix>=0) {
-    // if it has, then take the earlier time
-    if ((*fHitsCollection)[ix]->GetTime()>hitTime) { 
-      (*fHitsCollection)[ix]->SetTime(hitTime); 
-    }
-  }
-  else {
-    // if not, create a new hit and set it to the collection
-    auto hit = new B5HodoscopeHit(copyNo,hitTime);
-    auto physical = touchable->GetVolume();
-    hit->SetLogV(physical->GetLogicalVolume());
-    auto transform = touchable->GetHistory()->GetTopTransform();
-    transform.Invert();
-    hit->SetRot(transform.NetRotation());
-    hit->SetPos(transform.NetTranslation());
-    fHitsCollection->insert(hit);
-  }    
+  auto touchable = step->GetPreStepPoint()->GetTouchable();
+  auto motherPhysical = touchable->GetVolume(1); // mother
+  auto copyNo = motherPhysical->GetCopyNo();
+
+  auto worldPos = preStepPoint->GetPosition();
+  auto localPos 
+    = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPos);
+  
+  auto hit = new DriftChamberHit(copyNo);
+  hit->SetWorldPos(worldPos);
+  hit->SetLocalPos(localPos);
+  hit->SetTime(preStepPoint->GetGlobalTime());
+  
+  fHitsCollection->insert(hit);
+  
   return true;
 }
 

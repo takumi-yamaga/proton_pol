@@ -23,35 +23,33 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-//
-/// \file B5EmCalorimeterSD.hh
-/// \brief Definition of the B5EmCalorimeterSD class
+// 
+/// \copied from B5RunAction.hh
+/// \brief Definition of the RunAction class
 
-#ifndef B5EmCalorimeterSD_h
-#define B5EmCalorimeterSD_h 1
+#ifndef RunAction_h
+#define RunAction_h 1
 
-#include "G4VSensitiveDetector.hh"
+#include "G4UserRunAction.hh"
+#include "globals.hh"
 
-#include "B5EmCalorimeterHit.hh"
+class EventAction;
 
-class G4Step;
-class G4HCofThisEvent;
-class G4TouchableHistory;
+class G4Run;
 
-/// EM calorimeter sensitive detector
+/// Run action class
 
-class B5EmCalorimeterSD : public G4VSensitiveDetector
-{   
+class RunAction : public G4UserRunAction
+{
   public:
-    B5EmCalorimeterSD(G4String name);
-    virtual ~B5EmCalorimeterSD();
-    
-    virtual void Initialize(G4HCofThisEvent*HCE);
-    virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-    
+    RunAction(EventAction* eventAction);
+    virtual ~RunAction();
+
+    virtual void BeginOfRunAction(const G4Run*);
+    virtual void   EndOfRunAction(const G4Run*);
+
   private:
-    B5EmCalorimeterHitsCollection* fHitsCollection;
-    G4int fHCID;
+    EventAction* fEventAction;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

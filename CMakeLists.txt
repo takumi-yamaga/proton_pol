@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(B5)
+project(proton_pol)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -33,17 +33,15 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(exampleB5 exampleB5.cc ${sources} ${headers})
-target_link_libraries(exampleB5 ${Geant4_LIBRARIES})
+add_executable(proton_pol proton_pol.cc ${sources} ${headers})
+target_link_libraries(proton_pol ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
-# Copy all scripts to the build directory, i.e. the directory in which we
-# build B5. This is so that we can run the executable directly because it
-# relies on these scripts being in the current working directory.
+# Copy all scripts to the build directory.
 #
-set(B5_SCRIPTS
-  exampleB5.in 
-  exampleB5.out 
+set(proton_pol_SCRIPTS
+  proton_pol.in 
+  proton_pol.out 
   icons.mac
   gui.mac
   run.png
@@ -54,7 +52,7 @@ set(B5_SCRIPTS
   vis.mac
   )
 
-foreach(_script ${B5_SCRIPTS})
+foreach(_script ${proton_pol_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
@@ -66,10 +64,10 @@ endforeach()
 # Add program to the project targets
 # (this avoids the need of typing the program name after make)
 #
-add_custom_target(B5 DEPENDS exampleB5)
+add_custom_target(proton_pol DEPENDS proton_pol)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS exampleB5 DESTINATION bin)
+install(TARGETS proton_pol DESTINATION bin)
 

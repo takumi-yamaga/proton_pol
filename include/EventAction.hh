@@ -24,33 +24,49 @@
 // ********************************************************************
 //
 //
-/// \file B5HodoscopeSD.hh
-/// \brief Definition of the B5HodoscopeSD class
+/// \copied from B5EventAction.hh
+/// \brief Definition of the EventAction class
 
-#ifndef B5HodoscopeSD_h
-#define B5HodoscopeSD_h 1
+#ifndef EventAction_h
+#define EventAction_h 1
 
-#include "G4VSensitiveDetector.hh"
-#include "B5HodoscopeHit.hh"
 
-class G4Step;
-class G4HCofThisEvent;
-class G4TouchableHistory;
+#include "G4UserEventAction.hh"
+#include "globals.hh"
 
-/// Hodoscope sensitive detector
+#include <vector>
+#include <array>
 
-class B5HodoscopeSD : public G4VSensitiveDetector
+// named constants
+const G4int kEm = 0;
+const G4int kHad = 1;
+const G4int kH1 = 0;
+const G4int kH2 = 1;
+const G4int kDim = 2;
+
+/// Event action
+
+class EventAction : public G4UserEventAction
 {
-  public:
-    B5HodoscopeSD(G4String name);
-    virtual ~B5HodoscopeSD();
+public:
+    EventAction();
+    virtual ~EventAction();
     
-    virtual void Initialize(G4HCofThisEvent*HCE);
-    virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+    virtual void BeginOfEventAction(const G4Event*);
+    virtual void EndOfEventAction(const G4Event*);
+
+    std::vector<G4double>& GetEmCalEdep() { return fCalEdep[kEm]; }
+    std::vector<G4double>& GetHadCalEdep() { return fCalEdep[kHad]; }
     
-  private:
-    B5HodoscopeHitsCollection* fHitsCollection;
-    G4int fHCID;
+private:
+    // hit collections Ids
+    std::array<G4int, kDim> fHodHCID;
+    std::array<G4int, kDim> fDriftHCID;
+    std::array<G4int, kDim> fCalHCID;
+    // histograms Ids
+    std::array<std::array<G4int, kDim>, kDim> fDriftHistoID;
+    // energy deposit in calorimeters cells
+    std::array<std::vector<G4double>, kDim> fCalEdep;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

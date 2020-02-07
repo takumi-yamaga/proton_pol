@@ -24,12 +24,12 @@
 // ********************************************************************
 //
 //
-/// \file B5RunAction.cc
-/// \brief Implementation of the B5RunAction class
+/// \copied from B5RunAction.cc
+/// \brief Implementation of the RunAction class
 
-#include "B5RunAction.hh"
-#include "B5EventAction.hh"
-#include "B5Analysis.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "Analysis.hh"
 
 #include "G4Run.hh"
 #include "G4UnitsTable.hh"
@@ -37,13 +37,13 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5RunAction::B5RunAction(B5EventAction* eventAction)
+RunAction::RunAction(EventAction* eventAction)
  : G4UserRunAction(),
    fEventAction(eventAction)
 { 
   // Create analysis manager
   // The choice of analysis technology is done via selectin of a namespace
-  // in B5Analysis.hh
+  // in Analysis.hh
   auto analysisManager = G4AnalysisManager::Instance();
   G4cout << "Using " << analysisManager->GetType() << G4endl;
 
@@ -51,7 +51,7 @@ B5RunAction::B5RunAction(B5EventAction* eventAction)
   analysisManager->SetNtupleMerging(true);
      // Note: merging ntuples is available only with Root output
   analysisManager->SetVerboseLevel(1);
-  analysisManager->SetFileName("B5");
+  analysisManager->SetFileName("proton_pol");
 
   // Book histograms, ntuple
   //
@@ -70,34 +70,18 @@ B5RunAction::B5RunAction(B5EventAction* eventAction)
     ->CreateH2("Chamber2 XY","Drift Chamber 2 X vs Y",           // h2 Id = 1
                50, -1500., 1500, 50, -300., 300.);
 
-  // Creating ntuple
-  //
-  if ( fEventAction ) {
-    analysisManager->CreateNtuple("B5", "Hits");
-    analysisManager->CreateNtupleIColumn("Dc1Hits");  // column Id = 0
-    analysisManager->CreateNtupleIColumn("Dc2Hits");  // column Id = 1
-    analysisManager->CreateNtupleDColumn("ECEnergy"); // column Id = 2
-    analysisManager->CreateNtupleDColumn("HCEnergy"); // column Id = 3
-    analysisManager->CreateNtupleDColumn("Time1");    // column Id = 4
-    analysisManager->CreateNtupleDColumn("Time2");    // column Id = 5
-    analysisManager                                   // column Id = 6
-      ->CreateNtupleDColumn("ECEnergyVector", fEventAction->GetEmCalEdep()); 
-    analysisManager                                   // column Id = 7
-      ->CreateNtupleDColumn("HCEnergyVector", fEventAction->GetHadCalEdep());
-    analysisManager->FinishNtuple();
-  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5RunAction::~B5RunAction()
+RunAction::~RunAction()
 {
   delete G4AnalysisManager::Instance();  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5RunAction::BeginOfRunAction(const G4Run* /*run*/)
+void RunAction::BeginOfRunAction(const G4Run* /*run*/)
 { 
   //inform the runManager to save random number seed
   //G4RunManager::GetRunManager()->SetRandomNumberStore(true);
@@ -106,14 +90,14 @@ void B5RunAction::BeginOfRunAction(const G4Run* /*run*/)
   auto analysisManager = G4AnalysisManager::Instance();
 
   // Open an output file 
-  // The default file name is set in B5RunAction::B5RunAction(),
+  // The default file name is set in RunAction::RunAction(),
   // it can be overwritten in a macro
   analysisManager->OpenFile();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5RunAction::EndOfRunAction(const G4Run* /*run*/)
+void RunAction::EndOfRunAction(const G4Run* /*run*/)
 {
   // save histograms & ntuple
   //

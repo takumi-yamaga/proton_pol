@@ -24,16 +24,16 @@
 // ********************************************************************
 //
 //
-/// \file B5DetectorConstruction.cc
-/// \brief Implementation of the B5DetectorConstruction class
+/// \copied from B5DetectorConstruction.cc
+/// \brief Implementation of the DetectorConstruction class
 
-#include "B5DetectorConstruction.hh"
-#include "B5MagneticField.hh"
-#include "B5CellParameterisation.hh"
-#include "B5HodoscopeSD.hh"
-#include "B5DriftChamberSD.hh"
-#include "B5EmCalorimeterSD.hh"
-#include "B5HadCalorimeterSD.hh"
+#include "DetectorConstruction.hh"
+#include "MagneticField.hh"
+#include "CellParameterisation.hh"
+#include "HodoscopeSD.hh"
+#include "DriftChamberSD.hh"
+#include "EmCalorimeterSD.hh"
+#include "HadCalorimeterSD.hh"
 
 #include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
@@ -67,12 +67,12 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4ThreadLocal B5MagneticField* B5DetectorConstruction::fMagneticField = 0;
-G4ThreadLocal G4FieldManager* B5DetectorConstruction::fFieldMgr = 0;
+G4ThreadLocal MagneticField* DetectorConstruction::fMagneticField = 0;
+G4ThreadLocal G4FieldManager* DetectorConstruction::fFieldMgr = 0;
     
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5DetectorConstruction::B5DetectorConstruction()
+DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction(), 
   fMessenger(nullptr),
   fHodoscope1Logical(nullptr), fHodoscope2Logical(nullptr),
@@ -92,7 +92,7 @@ B5DetectorConstruction::B5DetectorConstruction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5DetectorConstruction::~B5DetectorConstruction()
+DetectorConstruction::~DetectorConstruction()
 {
   delete fArmRotation;
   delete fMessenger;
@@ -104,12 +104,11 @@ B5DetectorConstruction::~B5DetectorConstruction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4VPhysicalVolume* B5DetectorConstruction::Construct()
+G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   // Construct materials
   ConstructMaterials();
   auto air = G4Material::GetMaterial("G4_AIR");
-  //auto argonGas = G4Material::GetMaterial("B5_Ar");
   auto argonGas = G4Material::GetMaterial("G4_Ar");
   auto scintillator = G4Material::GetMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
@@ -254,7 +253,7 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
     = new G4Box("cellBox",7.5*cm,7.5*cm,15.*cm);
   fCellLogical
     = new G4LogicalVolume(cellSolid,csI,"cellLogical");
-  G4VPVParameterisation* cellParam = new B5CellParameterisation();
+  G4VPVParameterisation* cellParam = new CellParameterisation();
   new G4PVParameterised("cellPhysical",fCellLogical,emCalorimeterLogical,
                         kXAxis,kNofEmCells,cellParam);
   
@@ -362,38 +361,38 @@ G4VPhysicalVolume* B5DetectorConstruction::Construct()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5DetectorConstruction::ConstructSDandField()
+void DetectorConstruction::ConstructSDandField()
 {
   // sensitive detectors -----------------------------------------------------
   auto sdManager = G4SDManager::GetSDMpointer();
   G4String SDname;
   
-  auto hodoscope1 = new B5HodoscopeSD(SDname="/hodoscope1");
+  auto hodoscope1 = new HodoscopeSD(SDname="/hodoscope1");
   sdManager->AddNewDetector(hodoscope1);
   fHodoscope1Logical->SetSensitiveDetector(hodoscope1);
 
-  auto hodoscope2 = new B5HodoscopeSD(SDname="/hodoscope2");
+  auto hodoscope2 = new HodoscopeSD(SDname="/hodoscope2");
   sdManager->AddNewDetector(hodoscope2);
   fHodoscope2Logical->SetSensitiveDetector(hodoscope2);
   
-  auto chamber1 = new B5DriftChamberSD(SDname="/chamber1");
+  auto chamber1 = new DriftChamberSD(SDname="/chamber1");
   sdManager->AddNewDetector(chamber1);
   fWirePlane1Logical->SetSensitiveDetector(chamber1);
 
-  auto chamber2 = new B5DriftChamberSD(SDname="/chamber2");
+  auto chamber2 = new DriftChamberSD(SDname="/chamber2");
   sdManager->AddNewDetector(chamber2);
   fWirePlane2Logical->SetSensitiveDetector(chamber2);
   
-  auto emCalorimeter = new B5EmCalorimeterSD(SDname="/EMcalorimeter");
+  auto emCalorimeter = new EmCalorimeterSD(SDname="/EMcalorimeter");
   sdManager->AddNewDetector(emCalorimeter);
   fCellLogical->SetSensitiveDetector(emCalorimeter);
   
-  auto hadCalorimeter = new B5HadCalorimeterSD(SDname="/HadCalorimeter");
+  auto hadCalorimeter = new HadCalorimeterSD(SDname="/HadCalorimeter");
   sdManager->AddNewDetector(hadCalorimeter);
   fHadCalScintiLogical->SetSensitiveDetector(hadCalorimeter);
 
   // magnetic field ----------------------------------------------------------
-  fMagneticField = new B5MagneticField();
+  fMagneticField = new MagneticField();
   fFieldMgr = new G4FieldManager();
   fFieldMgr->SetDetectorField(fMagneticField);
   fFieldMgr->CreateChordFinder(fMagneticField);
@@ -403,7 +402,7 @@ void B5DetectorConstruction::ConstructSDandField()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5DetectorConstruction::ConstructMaterials()
+void DetectorConstruction::ConstructMaterials()
 {
   auto nistManager = G4NistManager::Instance();
 
@@ -412,10 +411,6 @@ void B5DetectorConstruction::ConstructMaterials()
   
   // Argon gas
   nistManager->FindOrBuildMaterial("G4_Ar");
-  // With a density different from the one defined in NIST
-  // G4double density = 1.782e-03*g/cm3; 
-  // nistManager->BuildMaterialWithNewDensity("B5_Ar","G4_Ar",density);
-  // !! cases segmentation fault
 
   // Scintillator
   // (PolyVinylToluene, C_9H_10)
@@ -427,22 +422,13 @@ void B5DetectorConstruction::ConstructMaterials()
   // Lead
   nistManager->FindOrBuildMaterial("G4_Pb");
   
-  // Vacuum "Galactic"
-  // nistManager->FindOrBuildMaterial("G4_Galactic");
-
-  // Vacuum "Air with low density"
-  // auto air = G4Material::GetMaterial("G4_AIR");
-  // G4double density = 1.0e-5*air->GetDensity();
-  // nistManager
-  //   ->BuildMaterialWithNewDensity("Air_lowDensity", "G4_AIR", density);
-
   G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5DetectorConstruction::SetArmAngle(G4double val)
+void DetectorConstruction::SetArmAngle(G4double val)
 {
   if (!fSecondArmPhys) {
       G4cerr << "Detector has not yet been constructed." << G4endl;
@@ -462,17 +448,17 @@ void B5DetectorConstruction::SetArmAngle(G4double val)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5DetectorConstruction::DefineCommands()
+void DetectorConstruction::DefineCommands()
 {
-  // Define /B5/detector command directory using generic messenger class
+  // Define /proton_pol/detector command directory using generic messenger class
   fMessenger = new G4GenericMessenger(this, 
-                                      "/B5/detector/", 
+                                      "/proton_pol/detector/", 
                                       "Detector control");
 
   // armAngle command
   auto& armAngleCmd
     = fMessenger->DeclareMethodWithUnit("armAngle","deg",
-                                &B5DetectorConstruction::SetArmAngle, 
+                                &DetectorConstruction::SetArmAngle, 
                                 "Set rotation angle of the second arm.");
   armAngleCmd.SetParameterName("angle", true);
   armAngleCmd.SetRange("angle>=0. && angle<180.");

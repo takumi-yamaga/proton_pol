@@ -24,10 +24,10 @@
 // ********************************************************************
 //
 //
-/// \file B5PrimaryGeneratorAction.cc
-/// \brief Implementation of the B5PrimaryGeneratorAction class
+/// \copied from B5PrimaryGeneratorAction.cc
+/// \brief Implementation of the PrimaryGeneratorAction class
 
-#include "B5PrimaryGeneratorAction.hh"
+#include "PrimaryGeneratorAction.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -39,7 +39,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5PrimaryGeneratorAction::B5PrimaryGeneratorAction()
+PrimaryGeneratorAction::PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),     
   fParticleGun(nullptr), fMessenger(nullptr), 
   fPositron(nullptr), fMuon(nullptr), fPion(nullptr), 
@@ -69,7 +69,7 @@ B5PrimaryGeneratorAction::B5PrimaryGeneratorAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5PrimaryGeneratorAction::~B5PrimaryGeneratorAction()
+PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
   delete fParticleGun;
   delete fMessenger;
@@ -77,7 +77,7 @@ B5PrimaryGeneratorAction::~B5PrimaryGeneratorAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
   G4ParticleDefinition* particle;  
   if (fRandomizePrimary) {
@@ -119,12 +119,12 @@ void B5PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5PrimaryGeneratorAction::DefineCommands()
+void PrimaryGeneratorAction::DefineCommands()
 {
-  // Define /B5/generator command directory using generic messenger class
+  // Define /proton_pol/generator command directory using generic messenger class
   fMessenger 
     = new G4GenericMessenger(this, 
-                             "/B5/generator/", 
+                             "/proton_pol/generator/", 
                              "Primary generator control");
             
   // momentum command

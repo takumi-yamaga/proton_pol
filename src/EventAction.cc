@@ -24,16 +24,14 @@
 // ********************************************************************
 //
 //
-/// \file B5EventAction.cc
-/// \brief Implementation of the B5EventAction class
+/// \copied from B5EventAction.cc
+/// \brief Implementation of the EventAction class
 
-#include "B5EventAction.hh"
-#include "B5HodoscopeHit.hh"
-#include "B5DriftChamberHit.hh"
-#include "B5EmCalorimeterHit.hh"
-#include "B5HadCalorimeterHit.hh"
-#include "B5Constants.hh"
-#include "B5Analysis.hh"
+#include "EventAction.hh"
+#include "HodoscopeHit.hh"
+#include "DriftChamberHit.hh"
+#include "Constants.hh"
+#include "Analysis.hh"
 
 #include "G4Event.hh"
 #include "G4RunManager.hh"
@@ -57,8 +55,8 @@ G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
   if (!hce) {
       G4ExceptionDescription msg;
       msg << "No hits collection of this event found." << G4endl; 
-      G4Exception("B5EventAction::EndOfEventAction()",
-                  "B5Code001", JustWarning, msg);
+      G4Exception("EventAction::EndOfEventAction()",
+                  "Code001", JustWarning, msg);
       return nullptr;
   }
 
@@ -66,8 +64,8 @@ G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
   if ( ! hc) {
     G4ExceptionDescription msg;
     msg << "Hits collection " << collId << " of this event not found." << G4endl; 
-    G4Exception("B5EventAction::EndOfEventAction()",
-                "B5Code001", JustWarning, msg);
+    G4Exception("EventAction::EndOfEventAction()",
+                "Code001", JustWarning, msg);
   }
   return hc;  
 }
@@ -76,7 +74,7 @@ G4VHitsCollection* GetHC(const G4Event* event, G4int collId) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5EventAction::B5EventAction()
+EventAction::EventAction()
 : G4UserEventAction(), 
   fHodHCID  {{ -1, -1 }},
   fDriftHCID{{ -1, -1 }},
@@ -93,12 +91,12 @@ B5EventAction::B5EventAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-B5EventAction::~B5EventAction()
+EventAction::~EventAction()
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5EventAction::BeginOfEventAction(const G4Event*)
+void EventAction::BeginOfEventAction(const G4Event*)
 {
   // Find hit collections and histogram Ids by names (just once)
   // and save them in the data members of this class
@@ -133,7 +131,7 @@ void B5EventAction::BeginOfEventAction(const G4Event*)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B5EventAction::EndOfEventAction(const G4Event* event)
+void EventAction::EndOfEventAction(const G4Event* event)
 {
   //
   // Fill histograms & ntuple
@@ -153,7 +151,7 @@ void B5EventAction::EndOfEventAction(const G4Event* event)
     analysisManager->FillNtupleIColumn(iDet, nhit);
   
     for (unsigned long i = 0; i < nhit; ++i) {
-      auto hit = static_cast<B5DriftChamberHit*>(hc->GetHit(i));
+      auto hit = static_cast<DriftChamberHit*>(hc->GetHit(i));
       auto localPos = hit->GetLocalPos();
       analysisManager->FillH2(fDriftHistoID[kH2][iDet], localPos.x(), localPos.y());
     }
@@ -173,10 +171,10 @@ void B5EventAction::EndOfEventAction(const G4Event* event)
       G4double edep = 0.;
       // The EM and Had calorimeter hits are of different types
       if (iDet == 0) {
-        auto hit = static_cast<B5EmCalorimeterHit*>(hc->GetHit(i));
+        auto hit = static_cast<EmCalorimeterHit*>(hc->GetHit(i));
         edep = hit->GetEdep();
       } else {
-        auto hit = static_cast<B5HadCalorimeterHit*>(hc->GetHit(i));
+        auto hit = static_cast<HadCalorimeterHit*>(hc->GetHit(i));
         edep = hit->GetEdep();
       }
       if ( edep > 0. ) {
@@ -195,7 +193,7 @@ void B5EventAction::EndOfEventAction(const G4Event* event)
     if ( ! hc ) return;
 
     for (unsigned int i = 0; i<hc->GetSize(); ++i) {
-      auto hit = static_cast<B5HodoscopeHit*>(hc->GetHit(i));
+      auto hit = static_cast<HodoscopeHit*>(hc->GetHit(i));
       // columns 4, 5
       analysisManager->FillNtupleDColumn(iDet + 4, hit->GetTime());
     }
@@ -233,7 +231,7 @@ void B5EventAction::EndOfEventAction(const G4Event* event)
     G4cout << "Drift Chamber " << iDet + 1 << " has " <<  hc->GetSize()  << " hits." << G4endl;
     for (auto layer = 0; layer < kNofChambers; ++layer) {
       for (unsigned int i = 0; i < hc->GetSize(); i++) {
-        auto hit = static_cast<B5DriftChamberHit*>(hc->GetHit(i));
+        auto hit = static_cast<DriftChamberHit*>(hc->GetHit(i));
         if (hit->GetLayerID() == layer) hit->Print();
       }
     }

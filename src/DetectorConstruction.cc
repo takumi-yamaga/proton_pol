@@ -65,7 +65,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction()
-: G4VUserDetectorConstruction(), 
+  : G4VUserDetectorConstruction(), 
   dcin_wireplane_logical_(nullptr), dcout_wireplane_logical_(nullptr)
 {
 }
@@ -74,7 +74,7 @@ DetectorConstruction::DetectorConstruction()
 DetectorConstruction::~DetectorConstruction()
 {
   delete fMessenger;
-  
+
   for (auto visAttributes: fVisAttributes) {
     delete visAttributes;
   }  
@@ -91,7 +91,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto scintillator = G4Material::GetMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
   auto lead = G4Material::GetMaterial("G4_Pb");
-  
+
   // Option to switch on/off checking of volumes overlaps
   //
   G4bool checkOverlaps = true;
@@ -110,14 +110,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // target 
   auto target_x = 10.*mm;
   auto target_y = 10.*mm;
-  auto target_thickness = 1.*mm; 
+  auto target_thickness = 10.*mm; 
   auto targetSolid 
     = new G4Box("targetBox",target_x/2.,target_y/2.,target_thickness/2.);
   auto targetLogical
     = new G4LogicalVolume(targetSolid,air,"targetLogical");
   auto targetPhysical
-    = new G4PVPlacement(0,G4ThreeVector(),targetLogical,"targetPhysical",worldLogical,
-        false,0,checkOverlaps);
+    = new G4PVPlacement(0,G4ThreeVector(),targetLogical,"targetPhysical",
+        worldLogical,false,0,checkOverlaps);
 
   // drift chamber (in)
   auto dc_thickness = 1.*mm;
@@ -127,15 +127,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto dcin_Logical
     = new G4LogicalVolume(dcin_Solid,air,"dcin_Logical");
   auto dcin_Physical
-    = new G4PVPlacement(0,dcin_position,dcin_Logical,"dcin_Physical",worldLogical,
-        false,0,checkOverlaps);
+    = new G4PVPlacement(0,dcin_position,dcin_Logical,"dcin_Physical",
+        worldLogical,false,0,checkOverlaps);
   // wireplane
   auto dcin_wireplane_solid
     = new G4Box("dcin_wireplane_box", target_x/2., target_y/2., 0.1*mm/2.);
   dcin_wireplane_logical_
     = new G4LogicalVolume(dcin_wireplane_solid,argonGas,"dcin_wireplane_logical");
   auto dcin_wireplane_physical
-    = new G4PVPlacement(0,dcin_position,dcin_wireplane_logical_,"dcin_wireplane_physical",
+    = new G4PVPlacement(0,G4ThreeVector(),dcin_wireplane_logical_,"dcin_wireplane_physical",
         dcin_Logical, false,0,checkOverlaps);
 
   // drift chamber (out)
@@ -145,7 +145,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto dcout_Logical
     = new G4LogicalVolume(dcout_Solid,air,"dcout_Logical");
   auto dcout_Physical
-    = new G4PVPlacement(0,G4ThreeVector(),dcout_Logical,"dcout_Physical", 
+    = new G4PVPlacement(0,dcout_position,dcout_Logical,"dcout_Physical", 
         worldLogical, false,0,checkOverlaps);
   // wireplane
   auto dcout_wireplane_solid
@@ -153,7 +153,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   dcout_wireplane_logical_
     = new G4LogicalVolume(dcout_wireplane_solid,argonGas,"dcout_wireplane_logical");
   auto dcout_wireplane_physical
-    = new G4PVPlacement(0,dcout_position,dcout_wireplane_logical_,"dcout_wireplane_physical",
+    = new G4PVPlacement(0,G4ThreeVector(),dcout_wireplane_logical_,"dcout_wireplane_physical",
         dcout_Logical, false,0,checkOverlaps);
 
 
@@ -164,7 +164,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   worldLogical->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
 
-  visAttributes = new G4VisAttributes(G4Colour::Gray());
+  visAttributes = new G4VisAttributes(G4Colour::Blue());
   targetLogical->SetVisAttributes(visAttributes);
   fVisAttributes.push_back(visAttributes);
 

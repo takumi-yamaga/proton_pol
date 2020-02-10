@@ -29,6 +29,8 @@
 
 #include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
+#include "PhysicsList.hh"
+#include "PhysicsListMessenger.hh"
 
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
@@ -39,6 +41,8 @@
 #include "G4UImanager.hh"
 #include "FTFP_BERT.hh"
 #include "G4StepLimiterPhysics.hh"
+#include "G4PhysListFactory.hh"
+#include "G4VModularPhysicsList.hh"
 
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
@@ -65,9 +69,10 @@ int main(int argc,char** argv)
   // Mandatory user initialization classes
   runManager->SetUserInitialization(new DetectorConstruction);
 
-  auto physicsList = new FTFP_BERT;
-  physicsList->RegisterPhysics(new G4StepLimiterPhysics());
-  runManager->SetUserInitialization(physicsList);
+  auto physicslist = new PhysicsList();
+  //physicslist->ConstructProcess();
+  physicslist->AddPhysicsList("PGSP_BERT_HP");
+  runManager->SetUserInitialization(physicslist);
 
   // User action initialization
   runManager->SetUserInitialization(new ActionInitialization());

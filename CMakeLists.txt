@@ -33,8 +33,8 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(proton_pol proton_pol.cc ${sources} ${headers})
-target_link_libraries(proton_pol ${Geant4_LIBRARIES})
+add_executable(execute-proton_pol proton_pol.cc ${sources} ${headers})
+target_link_libraries(execute-proton_pol ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory.
@@ -64,10 +64,10 @@ endforeach()
 # Add program to the project targets
 # (this avoids the need of typing the program name after make)
 #
-add_custom_target(proton_pol DEPENDS proton_pol)
+add_custom_target(proton_pol DEPENDS execute-proton_pol)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS proton_pol DESTINATION bin)
+install(TARGETS execute-proton_pol DESTINATION bin)
 

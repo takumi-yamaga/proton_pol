@@ -34,16 +34,19 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "G4RotationMatrix.hh"
 #include "G4FieldManager.hh"
+#include "G4SystemOfUnits.hh"
 
 #include <vector>
-
-class MagneticField;
 
 class G4VPhysicalVolume;
 class G4Material;
 class G4VSensitiveDetector;
 class G4VisAttributes;
 class G4GenericMessenger;
+
+// static constant
+
+static const int kSpace = 0.1*mm;
 
 /// Detector construction
 
@@ -56,32 +59,19 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     virtual G4VPhysicalVolume* Construct();
     virtual void ConstructSDandField();
 
-    void SetArmAngle(G4double val);
-    G4double GetArmAngle() { return fArmAngle; }
-    
     void ConstructMaterials();
     
   private:
-    void DefineCommands();
-
     G4GenericMessenger* fMessenger;
     
-    static G4ThreadLocal MagneticField* fMagneticField;
-    static G4ThreadLocal G4FieldManager* fFieldMgr;
+    //static G4ThreadLocal MagneticField* fMagneticField;
+    //static G4ThreadLocal G4FieldManager* fFieldMgr;
     
-    G4LogicalVolume* fHodoscope1Logical;
-    G4LogicalVolume* fHodoscope2Logical;
-    G4LogicalVolume* fWirePlane1Logical;
-    G4LogicalVolume* fWirePlane2Logical;
-    G4LogicalVolume* fCellLogical;
-    G4LogicalVolume* fHadCalScintiLogical;
-    G4LogicalVolume* fMagneticLogical;
-    
+    G4LogicalVolume* dcin_wireplane_logical_;
+    G4LogicalVolume* dcout_wireplane_logical_;
+
     std::vector<G4VisAttributes*> fVisAttributes;
     
-    G4double fArmAngle;
-    G4RotationMatrix* fArmRotation;
-    G4VPhysicalVolume* fSecondArmPhys;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

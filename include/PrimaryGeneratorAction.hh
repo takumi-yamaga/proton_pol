@@ -55,32 +55,20 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     
     virtual void GeneratePrimaries(G4Event*);
     
-    void SetMomentum(G4double val) { fMomentum = val; }
-    G4double GetMomentum() const { return fMomentum; }
+    inline void SetMomentum(G4double momentum) { momentum_ = momentum; }
+    inline G4double GetMomentum() const { return momentum_; }
 
-    void SetSigmaMomentum(G4double val) { fSigmaMomentum = val; }
-    G4double GetSigmaMomentum() const { return fSigmaMomentum; }
-
-    void SetSigmaAngle(G4double val) { fSigmaAngle = val; }
-    G4double GetSigmaAngle() const { return fSigmaAngle; }
-
-    void SetRandomize(G4bool val) { fRandomizePrimary = val; }
-    G4bool GetRandomize() const { return fRandomizePrimary; }
+    inline void SetRandomize(G4bool randomize_primary) { randomize_primary_ = randomize_primary; }
+    inline G4bool GetRandomize() const { return randomize_primary_; }
     
   private:
     void DefineCommands();
 
-    G4ParticleGun* fParticleGun;
-    G4GenericMessenger* fMessenger;
-    G4ParticleDefinition* fPositron;
-    G4ParticleDefinition* fMuon;
-    G4ParticleDefinition* fPion;
-    G4ParticleDefinition* fKaon;
-    G4ParticleDefinition* fProton;
-    G4double fMomentum;
-    G4double fSigmaMomentum;
-    G4double fSigmaAngle;
-    G4bool fRandomizePrimary;
+    G4ParticleGun* particlegun_;
+    G4GenericMessenger* messenger_;
+    G4ParticleDefinition* proton_;
+    G4double momentum_;
+    G4bool randomize_primary_;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

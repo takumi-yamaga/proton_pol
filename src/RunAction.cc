@@ -66,13 +66,15 @@ RunAction::RunAction(EventAction* eventAction)
     ->CreateH1("dcin_direction","dcin : direction;direction;counts", 180, 0., 180.);
   analysisManager // H1-ID = 3
     ->CreateH1("dcout_direction","dcout : direction;direction;counts", 180, 0., 180.);
+  analysisManager // H1-ID = 4
+    ->CreateH1("difference_dcin_and_dcout_direction","analysis : difference of directions of dcin and dcout;difference of directions;counts", 180, 0., 180.);
   
   // Creating 2D histograms
-  analysisManager                                                
-    ->CreateH2("dcin_hitposition_xy","dcin : hit position on x-y plane;x;y",           // h2 Id = 0
+  analysisManager  // H2-ID = 0                                              
+    ->CreateH2("dcin_hitposition_xy","dcin : hit position on x-y plane;x;y",
                50, -100., 100, 50, -100., 100.); 
-  analysisManager                                                
-    ->CreateH2("dcin_hitposition_xy","dcout : hit position on x-y plane;x;y",           // h2 Id = 1
+  analysisManager  // H2-ID = 1                                                
+    ->CreateH2("dcout_hitposition_xy","dcout : hit position on x-y plane;x;y", 
                50, -100., 100, 50, -100., 100.);
 
 }

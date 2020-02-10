@@ -38,7 +38,9 @@
 #include <array>
 
 // named constants
-const G4int kNumOfDC = 2;
+const G4int kTotalDCs = 2;
+const G4int kTotalHistogramsForDC = 3;
+const G4int kTotalHistogramsForAnalysis = 1;
 
 /// Event action
 
@@ -53,9 +55,10 @@ public:
 
 private:
     // hit collections Ids
-    std::array<G4int, kNumOfDC> dc_hitcollection_id_;
+    std::array<G4int, kTotalDCs> dc_hitcollection_id_;
     // histograms Ids
-    //std::array<std::array<G4int, kDim>, kDim> fDriftHistoID;
+    std::array<std::array<G4int, kTotalDCs>, kTotalHistogramsForDC> dc_histogram_id_;
+    std::array<G4int, kTotalHistogramsForAnalysis> analysis_histogram_id_;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

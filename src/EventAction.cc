@@ -98,26 +98,34 @@ void EventAction::BeginOfEventAction(const G4Event*)
     auto analysisManager = G4AnalysisManager::Instance();
 
     // hits collections names
-    array<G4String, kNumOfDC> dc_hitcollection_name 
+    array<G4String, kTotalDCs> dc_hitcollection_name 
       = {{ "dcin/dc_hitcollection", "dcout/dc_hitcollection" }};
 
     // histograms names
-    //array<array<G4String, kNumOfDC>, kNumOfDC> histogram_name 
-    //  = {{ {{ "dcin", "dcout" }}, {{ "dcin xy", "dcout xy" }} }};
+    array<array<G4String, kTotalDCs>, kTotalHistogramsForDC> dc_histogram_name 
+      = {{ {{ "dcin_numhit", "dcout_numhit" }},
+        {{ "dcin_direction", "dcout_direction" }},
+        {{ "dcin_hitposition_xy", "dcout_hitposition_xy" }} }};
+    array<G4String, kTotalHistogramsForAnalysis> analysis_histogram_name 
+      = {{ "difference_dcin_and_dcout_direction" }};
 
-    for (G4int i_dc = 0; i_dc < kNumOfDC; ++i_dc) {
+    for (auto i_dc = 0; i_dc < kTotalDCs; ++i_dc) {
       // hit collections IDs
       dc_hitcollection_id_[i_dc] = sdManager->GetCollectionID(dc_hitcollection_name[i_dc]);
 
       // histograms IDs
-      //fDriftHistoID[kH1][i_dc] = analysisManager->GetH1Id(histoName[kH1][i_dc]);
-      //fDriftHistoID[kH2][i_dc] = analysisManager->GetH2Id(histoName[kH2][i_dc]);
+      dc_histogram_id_[0][i_dc] = analysisManager->GetH1Id(dc_histogram_name[0][i_dc]);
+      dc_histogram_id_[1][i_dc] = analysisManager->GetH1Id(dc_histogram_name[1][i_dc]);
+      dc_histogram_id_[2][i_dc] = analysisManager->GetH2Id(dc_histogram_name[2][i_dc]);
+    }
+    for (auto i_analysis = 0; i_analysis < kTotalHistogramsForAnalysis; ++i_analysis) {
+      analysis_histogram_id_[i_analysis]
+        = analysisManager->GetH1Id(analysis_histogram_name[i_analysis]);
     }
   }
 }     
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 void EventAction::EndOfEventAction(const G4Event* event)
 {
   //
@@ -126,38 +134,58 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
   // Get analysis manager
   auto analysisManager = G4AnalysisManager::Instance();
- 
+
   // Drift chambers hits
-  for (G4int i_dc = 0; i_dc < kNumOfDC; ++i_dc) {
+  G4double dcin_direction = 0.;
+  G4bool dcin_has_hit = false;
+  G4double dcout_direction = 0.;
+  G4bool dcout_has_hit = false;
+  for (G4int i_dc = 0; i_dc < kTotalDCs; ++i_dc) {
     auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
     if ( ! hc ) return;
 
-    //auto nhit = hc->GetSize();
-    //analysisManager->FillH1(fDriftHistoID[kH1][iDet], nhit );
-    // columns 0, 1
-    //analysisManager->FillNtupleIColumn(iDet, nhit);
-  
-    //for (unsigned long i = 0; i < nhit; ++i) {
-    //  auto hit = static_cast<DriftChamberHit*>(hc->GetHit(i));
-    //  auto localPos = hit->GetLocalPos();
-    //  analysisManager->FillH2(fDriftHistoID[kH2][iDet], localPos.x(), localPos.y());
-    //}
+    auto total_hits = hc->GetSize();
+    analysisManager->FillH1(dc_histogram_id_[0][i_dc], total_hits );
+
+    for (unsigned long i_hit = 0; i_hit < total_hits; ++i_hit) {
+      auto hit = static_cast<DriftChamberHit*>(hc->GetHit(i_hit));
+      G4ThreeVector momentum = hit->GetMomentum();
+      G4double direction = momentum.theta()*deg;
+      G4ThreeVector local_position = hit->GetLocalPosition();
+      analysisManager->FillH1(dc_histogram_id_[1][i_dc], direction);
+      analysisManager->FillH2(dc_histogram_id_[2][i_dc], local_position.x(), local_position.y());
+      if(i_hit == 0){
+        if(i_dc == 0){
+          dcin_has_hit = true;
+          dcin_direction = direction;
+        }
+        else if (i_dc == 1){
+          dcout_has_hit = true;
+          dcout_direction = direction;
+        }
+      }
+
+    }
+    if(dcin_has_hit && dcout_has_hit){
+      G4double diff_direction = dcin_direction - dcout_direction;
+      analysisManager->FillH1(analysis_histogram_id_[0], diff_direction);
+    }
   }
-      
+
 
   //
   // Print diagnostics
   // 
-  
+
   auto printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
   if ( printModulo == 0 || event->GetEventID() % printModulo != 0) return;
-  
+
   // Drift chambers
-  for (G4int i_dc = 0; i_dc < kNumOfDC; ++i_dc) {
-    auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
-    if ( ! hc ) return;
-    G4cout << "Drift Chamber " << i_dc + 1 << " has " <<  hc->GetSize()  << " hits." << G4endl;
-  }
+  //for (G4int i_dc = 0; i_dc < kNumberofDCs; ++i_dc) {
+  //  auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
+  //  if ( ! hc ) return;
+  //  G4cout << "Drift Chamber " << i_dc + 1 << " has " <<  hc->GetSize()  << " hits." << G4endl;
+  //}
 
 }
 

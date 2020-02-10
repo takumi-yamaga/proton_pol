@@ -67,23 +67,27 @@ class DriftChamberHit : public G4VHit
     virtual std::vector<G4AttValue>* CreateAttValues() const;
     virtual void Print();
 
-    void SetLayerID(G4int z) { fLayerID = z; }
-    G4int GetLayerID() const { return fLayerID; }
+    inline void SetLayerID(G4int id) { layer_id_ = id; }
+    inline G4int GetLayerID() const { return layer_id_; }
 
-    void SetTime(G4double t) { fTime = t; }
-    G4double GetTime() const { return fTime; }
+    inline void SetHitTime(G4double time) { hit_time_ = time; }
+    inline G4double GetHitTime() const { return hit_time_; }
 
-    void SetLocalPos(G4ThreeVector xyz) { fLocalPos = xyz; }
-    G4ThreeVector GetLocalPos() const { return fLocalPos; }
+    inline void SetLocalPosition(G4ThreeVector position) { local_position_ = position; }
+    inline G4ThreeVector GetLocalPosition() const { return local_position_; }
 
-    void SetWorldPos(G4ThreeVector xyz) { fWorldPos = xyz; }
-    G4ThreeVector GetWorldPos() const { return fWorldPos; }
+    inline void SetGlobalPosition(G4ThreeVector position) { global_position_ = position; }
+    inline G4ThreeVector GetGlobalPosition() const { return global_position_; }
+    
+    inline void SetMomentum(G4ThreeVector momentum) { momentum_ = momentum; }
+    inline G4ThreeVector GetMomentum() const { return momentum_; }
     
   private:
-    G4int fLayerID;
-    G4double fTime;
-    G4ThreeVector fLocalPos;
-    G4ThreeVector fWorldPos;
+    G4int layer_id_;
+    G4double hit_time_;
+    G4ThreeVector local_position_;
+    G4ThreeVector global_position_;
+    G4ThreeVector momentum_;
 };
 
 using DriftChamberHitsCollection = G4THitsCollection<DriftChamberHit>;

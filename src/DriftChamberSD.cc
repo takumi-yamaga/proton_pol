@@ -43,7 +43,7 @@ DriftChamberSD::DriftChamberSD(G4String name)
 : G4VSensitiveDetector(name), 
   fHitsCollection(nullptr), fHCID(-1)
 {
-  collectionName.insert("driftChamberColl");
+  collectionName.insert("dc_hitcollection");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -77,14 +77,15 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   auto motherPhysical = touchable->GetVolume(1); // mother
   auto copyNo = motherPhysical->GetCopyNo();
 
-  auto worldPos = preStepPoint->GetPosition();
-  auto localPos 
-    = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPos);
+  auto global_position = preStepPoint->GetPosition();
+  auto local_position
+    = touchable->GetHistory()->GetTopTransform().TransformPoint(global_position);
   
   auto hit = new DriftChamberHit(copyNo);
-  hit->SetWorldPos(worldPos);
-  hit->SetLocalPos(localPos);
-  hit->SetTime(preStepPoint->GetGlobalTime());
+  hit->SetGlobalPosition(global_position);
+  hit->SetLocalPosition(local_position);
+  hit->SetHitTime(preStepPoint->GetGlobalTime());
+  hit->SetMomentum(preStepPoint->GetMomentum());
   
   fHitsCollection->insert(hit);
   

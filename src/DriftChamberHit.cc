@@ -49,14 +49,14 @@ G4ThreadLocal G4Allocator<DriftChamberHit>* DriftChamberHitAllocator;
 
 DriftChamberHit::DriftChamberHit()
 : G4VHit(), 
-  fLayerID(-1), fTime(0.), fLocalPos(0), fWorldPos(0)
+  layer_id_(-1), hit_time_(0.), local_position_(0), global_position_(0), momentum_(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-DriftChamberHit::DriftChamberHit(G4int layerID)
+DriftChamberHit::DriftChamberHit(G4int layer_id)
 : G4VHit(), 
-  fLayerID(layerID), fTime(0.), fLocalPos(0), fWorldPos(0)
+  layer_id_(layer_id), hit_time_(0.), local_position_(0), global_position_(0), momentum_(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -68,20 +68,22 @@ DriftChamberHit::~DriftChamberHit()
 
 DriftChamberHit::DriftChamberHit(const DriftChamberHit &right)
 : G4VHit(),
-  fLayerID(right.fLayerID),
-  fTime(right.fTime),
-  fLocalPos(right.fLocalPos),
-  fWorldPos(right.fWorldPos)
+  layer_id_(right.layer_id_),
+  hit_time_(right.hit_time_),
+  local_position_(right.local_position_),
+  global_position_(right.global_position_),
+  momentum_(right.momentum_)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 const DriftChamberHit& DriftChamberHit::operator=(const DriftChamberHit &right)
 {
-  fLayerID = right.fLayerID;
-  fTime = right.fTime;
-  fLocalPos = right.fLocalPos;
-  fWorldPos = right.fWorldPos;
+  layer_id_ = right.layer_id_;
+  hit_time_ = right.hit_time_;
+  local_position_ = right.local_position_;
+  global_position_ = right.global_position_;
+  momentum_ = right.momentum_;
   return *this;
 }
 
@@ -99,11 +101,10 @@ void DriftChamberHit::Draw()
   auto visManager = G4VVisManager::GetConcreteInstance();
   if (! visManager) return;
 
-  G4Circle circle(fWorldPos);
+  G4Circle circle(global_position_);
   circle.SetScreenSize(2);
   circle.SetFillStyle(G4Circle::filled);
-  G4Colour colour(1.,1.,0.);
-  G4VisAttributes attribs(colour);
+  G4VisAttributes attribs(G4Colour::Red());
   circle.SetVisAttributes(attribs);
   visManager->Draw(circle);
 }
@@ -141,11 +142,11 @@ std::vector<G4AttValue>* DriftChamberHit::CreateAttValues() const
   values
     ->push_back(G4AttValue("HitType","DriftChamberHit",""));
   values
-    ->push_back(G4AttValue("ID",G4UIcommand::ConvertToString(fLayerID),""));
+    ->push_back(G4AttValue("ID",G4UIcommand::ConvertToString(layer_id_),""));
   values
-    ->push_back(G4AttValue("Time",G4BestUnit(fTime,"Time"),""));
+    ->push_back(G4AttValue("Time",G4BestUnit(global_position_,"Time"),""));
   values
-    ->push_back(G4AttValue("Pos",G4BestUnit(fWorldPos,"Length"),""));
+    ->push_back(G4AttValue("Position",G4BestUnit(global_position_,"Length"),""));
   
   return values;
 }
@@ -154,9 +155,9 @@ std::vector<G4AttValue>* DriftChamberHit::CreateAttValues() const
 
 void DriftChamberHit::Print()
 {
-  G4cout << "  Layer[" << fLayerID << "] : time " << fTime/ns
-  << " (nsec) --- local (x,y) " << fLocalPos.x()
-  << ", " << fLocalPos.y() << G4endl;
+  //G4cout << "  Layer[" << fLayerID << "] : time " << fTime/ns
+  //<< " (nsec) --- local (x,y) " << fLocalPos.x()
+  //<< ", " << fLocalPos.y() << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

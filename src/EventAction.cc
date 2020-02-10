@@ -108,6 +108,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
     for (G4int i_dc = 0; i_dc < kNumOfDC; ++i_dc) {
       // hit collections IDs
       dc_hitcollection_id_[i_dc] = sdManager->GetCollectionID(dc_hitcollection_name[i_dc]);
+
       // histograms IDs
       //fDriftHistoID[kH1][i_dc] = analysisManager->GetH1Id(histoName[kH1][i_dc]);
       //fDriftHistoID[kH2][i_dc] = analysisManager->GetH2Id(histoName[kH2][i_dc]);
@@ -131,7 +132,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
     auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
     if ( ! hc ) return;
 
-    auto nhit = hc->GetSize();
+    //auto nhit = hc->GetSize();
     //analysisManager->FillH1(fDriftHistoID[kH1][iDet], nhit );
     // columns 0, 1
     //analysisManager->FillNtupleIColumn(iDet, nhit);

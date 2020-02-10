@@ -73,7 +73,7 @@ DetectorConstruction::DetectorConstruction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 DetectorConstruction::~DetectorConstruction()
 {
-  delete fMessenger;
+  //delete fMessenger;
 
   for (auto visAttributes: fVisAttributes) {
     delete visAttributes;

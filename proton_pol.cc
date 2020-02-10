@@ -78,6 +78,7 @@ int main(int argc,char** argv)
   // G4VisManager* visManager = new G4VisExecutive("Quiet");
   visManager->Initialize();
 
+
   // Get the pointer to the User Interface manager
   auto UImanager = G4UImanager::GetUIpointer();
 
@@ -90,7 +91,7 @@ int main(int argc,char** argv)
   else {
     UImanager->ApplyCommand("/control/execute init_vis.mac");
     if (ui->IsGUI()) {
-         UImanager->ApplyCommand("/control/execute gui.mac");
+      UImanager->ApplyCommand("/control/execute gui.mac");
     }     
     // start interactive session
     ui->SessionStart();

@@ -57,18 +57,23 @@ RunAction::RunAction(EventAction* eventAction)
   //
   
   // Creating 1D histograms
-  analysisManager
-    ->CreateH1("Chamber1","Drift Chamber 1 # Hits", 50, 0., 50); // h1 Id = 0
-  analysisManager
-    ->CreateH1("Chamber2","Drift Chamber 2 # Hits", 50, 0., 50); // h1 Id = 1
+  
+  analysisManager // H1-ID = 0
+    ->CreateH1("dcin_numhit","dcin : number of hits;number of hits;counts", 10, 0., 10.);
+  analysisManager // H1-ID = 1
+    ->CreateH1("dcout_numhit","dcout : number of hits;number of hits;counts", 10, 0., 10.);
+  analysisManager // H1-ID = 2
+    ->CreateH1("dcin_direction","dcin : direction;direction;counts", 180, 0., 180.);
+  analysisManager // H1-ID = 3
+    ->CreateH1("dcout_direction","dcout : direction;direction;counts", 180, 0., 180.);
   
   // Creating 2D histograms
   analysisManager                                                
-    ->CreateH2("Chamber1 XY","Drift Chamber 1 X vs Y",           // h2 Id = 0
-               50, -1000., 1000, 50, -300., 300.); 
+    ->CreateH2("dcin_hitposition_xy","dcin : hit position on x-y plane;x;y",           // h2 Id = 0
+               50, -100., 100, 50, -100., 100.); 
   analysisManager                                                
-    ->CreateH2("Chamber2 XY","Drift Chamber 2 X vs Y",           // h2 Id = 1
-               50, -1500., 1500, 50, -300., 300.);
+    ->CreateH2("dcin_hitposition_xy","dcout : hit position on x-y plane;x;y",           // h2 Id = 1
+               50, -100., 100, 50, -100., 100.);
 
 }
 

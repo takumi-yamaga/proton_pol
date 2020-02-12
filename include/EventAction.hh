@@ -42,6 +42,9 @@ const G4int kTotalDCs = 2;
 const G4int kTotalHistogramsForDC = 3;
 const G4int kTotalHistogramsForAnalysis = 1;
 
+const G4int kDCINId = 0;
+const G4int kDCOUTId = 1;
+
 /// Event action
 
 class EventAction : public G4UserEventAction

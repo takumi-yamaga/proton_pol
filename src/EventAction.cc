@@ -135,40 +135,48 @@ void EventAction::EndOfEventAction(const G4Event* event)
   // Get analysis manager
   auto analysisManager = G4AnalysisManager::Instance();
 
+
   // Drift chambers hits
+
+  // DCIN
   G4double dcin_direction = 0.;
   G4bool dcin_has_hit = false;
-  G4double dcout_direction = 0.;
-  G4bool dcout_has_hit = false;
-  for (G4int i_dc = 0; i_dc < kTotalDCs; ++i_dc) {
-    auto hc = GetHC(event, dc_hitcollection_id_[i_dc]);
-    if ( ! hc ) return;
+  auto dcin_hc = GetHC(event,dc_hitcollection_id_[kDCINId]); 
+  if(dcin_hc){
+    auto total_hits = dcin_hc->GetSize();
+    analysisManager->FillH1(dc_histogram_id_[0][kDCINId], total_hits );
 
-    auto total_hits = hc->GetSize();
-    analysisManager->FillH1(dc_histogram_id_[0][i_dc], total_hits );
-
-    for (unsigned long i_hit = 0; i_hit < total_hits; ++i_hit) {
-      auto hit = static_cast<DriftChamberHit*>(hc->GetHit(i_hit));
+    if(total_hits==1){
+      auto hit = static_cast<DriftChamberHit*>(dcin_hc->GetHit(0));
       G4ThreeVector momentum = hit->GetMomentum();
-      G4double direction = momentum.theta()*deg;
+      G4double direction = momentum.theta()/deg;
       G4ThreeVector local_position = hit->GetLocalPosition();
-      analysisManager->FillH1(dc_histogram_id_[1][i_dc], direction);
-      analysisManager->FillH2(dc_histogram_id_[2][i_dc], local_position.x(), local_position.y());
-      if(i_hit == 0){
-        if(i_dc == 0){
-          dcin_has_hit = true;
-          dcin_direction = direction;
-        }
-        else if (i_dc == 1){
-          dcout_has_hit = true;
-          dcout_direction = direction;
-        }
-      }
-
+      analysisManager->FillH1(dc_histogram_id_[1][kDCINId], direction);
+      analysisManager->FillH2(dc_histogram_id_[2][kDCINId],
+          local_position.x(), local_position.y());
+      dcin_has_hit = true;
+      dcin_direction = direction;
     }
-    if(dcin_has_hit && dcout_has_hit){
-      G4double diff_direction = dcin_direction - dcout_direction;
-      analysisManager->FillH1(analysis_histogram_id_[0], diff_direction);
+  }
+
+  // DCOUT
+  auto dcout_hc = GetHC(event,dc_hitcollection_id_[kDCOUTId]); 
+  if(dcout_hc){
+    auto total_hits = dcout_hc->GetSize();
+    analysisManager->FillH1(dc_histogram_id_[0][kDCOUTId], total_hits );
+
+    for(unsigned long i_hit = 0; i_hit<total_hits; i_hit++){
+      auto hit = static_cast<DriftChamberHit*>(dcout_hc->GetHit(i_hit));
+      G4ThreeVector momentum = hit->GetMomentum();
+      G4double direction = momentum.theta()/deg;
+      G4ThreeVector local_position = hit->GetLocalPosition();
+      analysisManager->FillH1(dc_histogram_id_[1][kDCOUTId], direction);
+      analysisManager->FillH2(dc_histogram_id_[2][kDCOUTId],
+          local_position.x(), local_position.y());
+      if(dcin_has_hit){
+        G4double diff_direction = fabs(dcin_direction - direction);
+        analysisManager->FillH1(analysis_histogram_id_[0], diff_direction);
+      }
     }
   }
 

@@ -71,7 +71,7 @@ int main(int argc,char** argv)
 
   auto physicslist = new PhysicsList();
   //physicslist->ConstructProcess();
-  physicslist->AddPhysicsList("PGSP_BERT_HP");
+  physicslist->AddPhysicsList("QGSP_BERT_HP");
   runManager->SetUserInitialization(physicslist);
 
   // User action initialization

@@ -115,7 +115,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto targetSolid 
     = new G4Box("targetBox",target_x/2.,target_y/2.,target_thickness/2.);
   auto targetLogical
-    = new G4LogicalVolume(targetSolid,air,"targetLogical");
+    = new G4LogicalVolume(targetSolid,carbon,"targetLogical");
   auto targetPhysical
     = new G4PVPlacement(0,G4ThreeVector(),targetLogical,"targetPhysical",
         worldLogical,false,0,checkOverlaps);

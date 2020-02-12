@@ -91,6 +91,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto scintillator = G4Material::GetMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
   auto lead = G4Material::GetMaterial("G4_Pb");
+  auto carbon = G4Material::GetMaterial("G4_C");
 
   // Option to switch on/off checking of volumes overlaps
   //
@@ -110,7 +111,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // target 
   auto target_x = 10.*mm;
   auto target_y = 10.*mm;
-  auto target_thickness = 10.*mm; 
+  auto target_thickness = 1.*mm; 
   auto targetSolid 
     = new G4Box("targetBox",target_x/2.,target_y/2.,target_thickness/2.);
   auto targetLogical
@@ -223,6 +224,9 @@ void DetectorConstruction::ConstructMaterials()
 
   // Lead
   nistManager->FindOrBuildMaterial("G4_Pb");
+
+  // Carbon
+  nistManager->FindOrBuildMaterial("G4_C");
 
   G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;

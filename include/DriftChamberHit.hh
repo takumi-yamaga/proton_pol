@@ -82,12 +82,16 @@ class DriftChamberHit : public G4VHit
     inline void SetMomentum(G4ThreeVector momentum) { momentum_ = momentum; }
     inline G4ThreeVector GetMomentum() const { return momentum_; }
     
+    inline void SetPolarization(G4ThreeVector polarization) { polarization_ = polarization; }
+    inline G4ThreeVector GetPolarization() const { return polarization_; }
+    
   private:
     G4int layer_id_;
     G4double hit_time_;
     G4ThreeVector local_position_;
     G4ThreeVector global_position_;
     G4ThreeVector momentum_;
+    G4ThreeVector polarization_;
 };
 
 using DriftChamberHitsCollection = G4THitsCollection<DriftChamberHit>;

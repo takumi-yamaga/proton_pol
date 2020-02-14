@@ -59,15 +59,19 @@ RunAction::RunAction(EventAction* eventAction)
   // Creating 1D histograms
   
   analysisManager // H1-ID = 0
-    ->CreateH1("dcin_numhit","dcin : number of hits;number of hits;counts", 10, 0., 10.);
+    ->CreateH1("dcin_numhit","dcin : number of hits", 10, 0., 10.,"","# of hits");
   analysisManager // H1-ID = 1
-    ->CreateH1("dcout_numhit","dcout : number of hits;number of hits;counts", 10, 0., 10.);
+    ->CreateH1("dcout_numhit","dcout : number of hits", 10, 0., 10.,"","# of hits");
   analysisManager // H1-ID = 2
-    ->CreateH1("dcin_direction","dcin : direction;direction;counts", 180, 0., 180.);
+    ->CreateH1("dcin_direction","dcin : direction", 180, 0., 180.,"deg","angle");
   analysisManager // H1-ID = 3
-    ->CreateH1("dcout_direction","dcout : direction;direction;counts", 180, 0., 180.);
+    ->CreateH1("dcout_direction","dcout : direction", 180, 0., 180.,"deg","angle");
   analysisManager // H1-ID = 4
-    ->CreateH1("difference_dcin_and_dcout_direction","analysis : difference of directions of dcin and dcout;difference of directions;counts", 180, 0., 180.);
+    ->CreateH1("scattering_angle","analysis : scattering angle", 180, 0., 180.,"deg","angle");
+  analysisManager // H1-ID = 5
+    ->CreateH1("scattering_angle_x","analysis : scattering angle in x-axis", 360, -180., 180.,"deg","angle");
+  analysisManager // H1-ID = 6
+    ->CreateH1("scattering_angle_y","analysis : scattering angle in y-axis", 360, -180., 180.,"deg","angle");
   
   // Creating 2D histograms
   analysisManager  // H2-ID = 0                                              

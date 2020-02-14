@@ -84,7 +84,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   particlegun_->SetParticleMomentumDirection(
       G4ThreeVector(std::sin(angle),0.,std::cos(angle)));
 
-  auto polarization = G4ThreeVector(1.,0.,0.);
+  auto polarization = G4ThreeVector(0.,1.,0.);
   particlegun_->SetParticlePolarization(polarization);
 
   particlegun_->GeneratePrimaryVertex(event);

@@ -49,14 +49,14 @@ G4ThreadLocal G4Allocator<DriftChamberHit>* DriftChamberHitAllocator;
 
 DriftChamberHit::DriftChamberHit()
 : G4VHit(), 
-  layer_id_(-1), hit_time_(0.), local_position_(0), global_position_(0), momentum_(0)
+  track_id_(-1), parent_id_(-1), particle_id_(-1), layer_id_(-1), hit_time_(0.), local_position_(0), global_position_(0), momentum_(0), polarization_(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DriftChamberHit::DriftChamberHit(G4int layer_id)
 : G4VHit(), 
-  layer_id_(layer_id), hit_time_(0.), local_position_(0), global_position_(0), momentum_(0)
+  track_id_(layer_id),parent_id_(layer_id),particle_id_(layer_id),layer_id_(layer_id), hit_time_(0.), local_position_(0), global_position_(0), momentum_(0), polarization_(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -68,22 +68,30 @@ DriftChamberHit::~DriftChamberHit()
 
 DriftChamberHit::DriftChamberHit(const DriftChamberHit &right)
 : G4VHit(),
+  track_id_(right.track_id_),
+  parent_id_(right.parent_id_),
+  particle_id_(right.particle_id_),
   layer_id_(right.layer_id_),
   hit_time_(right.hit_time_),
   local_position_(right.local_position_),
   global_position_(right.global_position_),
-  momentum_(right.momentum_)
+  momentum_(right.momentum_),
+  polarization_(right.polarization_)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 const DriftChamberHit& DriftChamberHit::operator=(const DriftChamberHit &right)
 {
+  track_id_ = right.track_id_;
+  parent_id_ = right.parent_id_;
+  particle_id_ = right.particle_id_;
   layer_id_ = right.layer_id_;
   hit_time_ = right.hit_time_;
   local_position_ = right.local_position_;
   global_position_ = right.global_position_;
   momentum_ = right.momentum_;
+  polarization_ = right.polarization_;
   return *this;
 }
 

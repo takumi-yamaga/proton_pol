@@ -68,8 +68,13 @@ void DriftChamberSD::Initialize(G4HCofThisEvent* hce)
 
 G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 {
-  auto charge = step->GetTrack()->GetDefinition()->GetPDGCharge();
+  auto track = step->GetTrack();
+
+  auto charge = track->GetDefinition()->GetPDGCharge();
   if (charge==0.) return true;
+
+  auto particle_id = track->GetParticleDefinition()->GetPDGEncoding();
+  //if(particle_id != 2212) return true;
   
   auto preStepPoint = step->GetPreStepPoint();
 
@@ -80,12 +85,16 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   auto global_position = preStepPoint->GetPosition();
   auto local_position
     = touchable->GetHistory()->GetTopTransform().TransformPoint(global_position);
-  
+
   auto hit = new DriftChamberHit(copyNo);
   hit->SetGlobalPosition(global_position);
   hit->SetLocalPosition(local_position);
   hit->SetHitTime(preStepPoint->GetGlobalTime());
   hit->SetMomentum(preStepPoint->GetMomentum());
+  hit->SetPolarization(track->GetPolarization());
+  hit->SetTrackID(track->GetTrackID());
+  hit->SetParentID(track->GetParentID());
+  hit->SetParticleID(particle_id);
   
   fHitsCollection->insert(hit);
   

@@ -107,7 +107,9 @@ void EventAction::BeginOfEventAction(const G4Event*)
         {{ "dcin_direction", "dcout_direction" }},
         {{ "dcin_hitposition_xy", "dcout_hitposition_xy" }} }};
     array<G4String, kTotalHistogramsForAnalysis> analysis_histogram_name 
-      = {{ "difference_dcin_and_dcout_direction" }};
+      = {{ "scattering_angle",
+        "scattering_angle_x",
+        "scattering_angle_y" }};
 
     for (auto i_dc = 0; i_dc < kTotalDCs; ++i_dc) {
       // hit collections IDs
@@ -139,7 +141,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
   // Drift chambers hits
 
   // DCIN
-  G4double dcin_direction = 0.;
+  G4ThreeVector dcin_momentum = G4ThreeVector(0);
   G4bool dcin_has_hit = false;
   auto dcin_hc = GetHC(event,dc_hitcollection_id_[kDCINId]); 
   if(dcin_hc){
@@ -148,18 +150,23 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
     if(total_hits==1){
       auto hit = static_cast<DriftChamberHit*>(dcin_hc->GetHit(0));
-      G4ThreeVector momentum = hit->GetMomentum();
-      G4double direction = momentum.theta()/deg;
+      dcin_momentum = hit->GetMomentum();
+      G4double direction = dcin_momentum.theta()/deg;
       G4ThreeVector local_position = hit->GetLocalPosition();
       analysisManager->FillH1(dc_histogram_id_[1][kDCINId], direction);
       analysisManager->FillH2(dc_histogram_id_[2][kDCINId],
           local_position.x(), local_position.y());
       dcin_has_hit = true;
-      dcin_direction = direction;
+      G4ThreeVector polarization = hit->GetPolarization();
+      //G4cout << "==============================================================" << G4endl;
+      //G4cout << "initial polarization " << G4endl;
+      //G4cout << polarization.x() << ", " << polarization.y() << ", " << polarization.z() << G4endl;
+      //G4cout << "==============================================================" << G4endl;
     }
   }
 
   // DCOUT
+  G4ThreeVector dcout_momentum = G4ThreeVector(0);
   auto dcout_hc = GetHC(event,dc_hitcollection_id_[kDCOUTId]); 
   if(dcout_hc){
     auto total_hits = dcout_hc->GetSize();
@@ -167,15 +174,37 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
     for(unsigned long i_hit = 0; i_hit<total_hits; i_hit++){
       auto hit = static_cast<DriftChamberHit*>(dcout_hc->GetHit(i_hit));
-      G4ThreeVector momentum = hit->GetMomentum();
-      G4double direction = momentum.theta()/deg;
+      dcout_momentum = hit->GetMomentum();
+      G4double direction = dcout_momentum.theta()/deg;
       G4ThreeVector local_position = hit->GetLocalPosition();
       analysisManager->FillH1(dc_histogram_id_[1][kDCOUTId], direction);
       analysisManager->FillH2(dc_histogram_id_[2][kDCOUTId],
           local_position.x(), local_position.y());
       if(dcin_has_hit){
-        G4double diff_direction = fabs(dcin_direction - direction);
-        analysisManager->FillH1(analysis_histogram_id_[0], diff_direction);
+        G4double scattering_angle = acos(dcin_momentum.dot(dcout_momentum)/dcin_momentum.mag()/dcout_momentum.mag())/deg;
+        analysisManager->FillH1(analysis_histogram_id_[0], scattering_angle);
+
+        G4ThreeVector dcin_momentum_x = dcin_momentum;
+        dcin_momentum_x.setY(0.);
+        G4ThreeVector dcout_momentum_x = dcout_momentum;
+        dcout_momentum_x.setY(0.);
+        G4double scattering_angle_x = acos(dcin_momentum_x.dot(dcout_momentum_x)/dcin_momentum_x.mag()/dcout_momentum_x.mag())/deg;
+        scattering_angle_x *= (dcout_momentum_x.x()-dcin_momentum_x.x());
+        scattering_angle_x /= fabs(dcout_momentum_x.x()-dcin_momentum_x.x());
+        analysisManager->FillH1(analysis_histogram_id_[1], scattering_angle_x);
+
+        G4ThreeVector dcin_momentum_y = dcin_momentum;
+        dcin_momentum_y.setX(0.);
+        G4ThreeVector dcout_momentum_y = dcout_momentum;
+        dcout_momentum_y.setX(0.);
+        G4double scattering_angle_y = acos(dcin_momentum_y.dot(dcout_momentum_y)/dcin_momentum_y.mag()/dcout_momentum_y.mag())/deg;
+        scattering_angle_y *= (dcout_momentum_y.y()-dcin_momentum_y.y());
+        scattering_angle_y /= fabs(dcout_momentum_y.y()-dcin_momentum_y.y());
+        analysisManager->FillH1(analysis_histogram_id_[2], scattering_angle_y);
+        //G4ThreeVector polarization = hit->GetPolarization();
+        //G4cout << polarization.x() << ", " << polarization.y() << ", " << polarization.z() << G4endl;
+        G4cout << hit->GetParticleID() << " : " << hit->GetTrackID() << ", " << hit->GetParentID() << std::endl;
+        //G4cout << " --> (" << local_position.x() << ", " << local_position.y() << ", " << local_position.z() << ")" << G4endl;
       }
     }
   }
@@ -195,6 +224,16 @@ void EventAction::EndOfEventAction(const G4Event* event)
   //  G4cout << "Drift Chamber " << i_dc + 1 << " has " <<  hc->GetSize()  << " hits." << G4endl;
   //}
 
+  // set printing per each event
+  if(event->GetEventID() >= 10){
+    G4RunManager::GetRunManager()->SetPrintProgress(10);
+  }
+  if(event->GetEventID() >= 100){
+    G4RunManager::GetRunManager()->SetPrintProgress(100);
+  }
+  if(event->GetEventID() >= 1000){
+    G4RunManager::GetRunManager()->SetPrintProgress(1000);
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

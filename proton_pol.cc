@@ -70,7 +70,6 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new DetectorConstruction);
 
   auto physicslist = new PhysicsList();
-  //physicslist->ConstructProcess();
   physicslist->AddPhysicsList("QGSP_BERT_HP");
   runManager->SetUserInitialization(physicslist);
 

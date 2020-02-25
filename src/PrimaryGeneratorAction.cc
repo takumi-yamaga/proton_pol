@@ -43,7 +43,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),     
   particlegun_(nullptr), messenger_(nullptr), 
   proton_(nullptr),
-  momentum_(155.*MeV),
+  momentum_(1000.*MeV),
   randomize_primary_(false)
 {
   G4int num_particle = 1;

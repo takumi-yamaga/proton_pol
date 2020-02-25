@@ -112,11 +112,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // target 
   auto target_size_x = 10.*mm;
   auto target_size_y = 10.*mm;
-  auto target_thickness = 1.*mm; 
+  auto target_thickness = 30.*mm; 
   auto targetSolid 
     = new G4Box("targetBox",target_size_x/2.,target_size_y/2.,target_thickness/2.);
   auto targetLogical
-    = new G4LogicalVolume(targetSolid,scintillator,"targetLogical");
+    = new G4LogicalVolume(targetSolid,lead,"targetLogical");
   auto targetPhysical
     = new G4PVPlacement(0,G4ThreeVector(),targetLogical,"targetPhysical",
         worldLogical,false,0,checkOverlaps);

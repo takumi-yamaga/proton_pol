@@ -203,7 +203,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
         analysisManager->FillH1(analysis_histogram_id_[2], scattering_angle_y);
         //G4ThreeVector polarization = hit->GetPolarization();
         //G4cout << polarization.x() << ", " << polarization.y() << ", " << polarization.z() << G4endl;
-        //G4cout << hit->GetParticleID() << " : " << hit->GetTrackID() << ", " << hit->GetParentID() << std::endl;
+        G4cout << hit->GetParticleID() << " : " << hit->GetTrackID() << ", " << hit->GetParentID() << std::endl;
         //G4cout << " --> (" << local_position.x() << ", " << local_position.y() << ", " << local_position.z() << ")" << G4endl;
       }
     }

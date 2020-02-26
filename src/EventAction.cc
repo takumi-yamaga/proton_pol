@@ -199,15 +199,16 @@ void EventAction::EndOfEventAction(const G4Event* event)
   // Analysis =============================================
   // ======================================================
   if(dcout_has_hit){
-    G4double theta = dcout_momentum.theta();
-    G4double phi   = dcout_momentum.phi();
-    if(theta/deg > 3.){
-      analysisManager->FillH1(analysis_histogram_id_[0], theta/deg);
-      analysisManager->FillH1(analysis_histogram_id_[1], phi/deg);
-      analysisManager->FillH1(analysis_histogram_id_[2], std::cos(phi));
-      analysisManager->FillH1(analysis_histogram_id_[3], std::sin(phi));
-      analysisManager->FillH2(analysis_histogram_id_[4], theta, std::cos(phi));
-      analysisManager->FillH2(analysis_histogram_id_[5], theta, std::sin(phi));
+    G4double momentum = dcout_momentum.mag()/MeV;
+    G4double theta = dcout_momentum.theta()/deg;
+    G4double phi   = dcout_momentum.phi()/deg;
+    if(10.<theta&&theta<20.){
+      analysisManager->FillH1(analysis_histogram_id_[0], theta);
+      analysisManager->FillH1(analysis_histogram_id_[1], phi);
+      analysisManager->FillH1(analysis_histogram_id_[2], cos(phi*deg));
+      analysisManager->FillH1(analysis_histogram_id_[3], sin(phi*deg));
+      analysisManager->FillH2(analysis_histogram_id_[4], theta, cos(phi*deg));
+      analysisManager->FillH2(analysis_histogram_id_[5], theta, sin(phi*deg));
     }
   }
   // ======================================================
@@ -255,14 +256,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
   //}
 
   // set printing per each event
-  if(event->GetEventID() >= 10){
-    G4RunManager::GetRunManager()->SetPrintProgress(10);
-  }
-  if(event->GetEventID() >= 100){
-    G4RunManager::GetRunManager()->SetPrintProgress(100);
-  }
-  if(event->GetEventID() >= 1000){
-    G4RunManager::GetRunManager()->SetPrintProgress(1000);
+  if(event->GetEventID()){
+    G4int print_progress = (G4int)log10(event->GetEventID());
+    G4RunManager::GetRunManager()->SetPrintProgress(pow(10,print_progress));
   }
 }
 

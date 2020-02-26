@@ -43,7 +43,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),     
   particlegun_(nullptr), messenger_(nullptr), 
   proton_(nullptr),
-  momentum_(1000.*MeV),
+  momentum_(200.*MeV),
   randomize_primary_(false)
 {
   G4int num_particle = 1;
@@ -80,9 +80,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
   auto ekin = std::sqrt(pp*pp+mass*mass)-mass;
   particlegun_->SetParticleEnergy(ekin);
 
-  auto angle = 0.0*deg;
-  particlegun_->SetParticleMomentumDirection(
-      G4ThreeVector(std::sin(angle),0.,std::cos(angle)));
+  auto direction = G4ThreeVector(0.,0.,1.);
+  particlegun_->SetParticleMomentumDirection(direction);
 
   auto polarization = G4ThreeVector(0.,1.,0.);
   particlegun_->SetParticlePolarization(polarization);

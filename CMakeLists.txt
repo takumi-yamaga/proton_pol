@@ -4,6 +4,12 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(proton_pol)
 
 #----------------------------------------------------------------------------
+# Setup compile options
+#
+set(CMAKE_CSS_FLAGS_DEBUG "-g3 -O0")
+set(CMAKE_CSS_FLAGS_RELEASE "-O2")
+
+#----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
 # to build a batch mode only executable
@@ -26,7 +32,7 @@ include(${Geant4_USE_FILE})
 # NB: headers are included so they will show up in IDEs
 #
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include 
-                    ${Geant4_INCLUDE_DIR})
+  ${Geant4_INCLUDE_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
@@ -40,16 +46,12 @@ target_link_libraries(execute-proton_pol ${Geant4_LIBRARIES})
 # Copy all scripts to the build directory.
 #
 set(proton_pol_SCRIPTS
-  proton_pol.in 
-  proton_pol.out 
   icons.mac
   gui.mac
-  run.png
   init.mac 
   init_vis.mac 
-  run1.mac 
-  run2.mac 
   vis.mac
+  run.mac 
   )
 
 foreach(_script ${proton_pol_SCRIPTS})

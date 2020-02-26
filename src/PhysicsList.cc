@@ -112,11 +112,6 @@ PhysicsList::~PhysicsList()
 
 void PhysicsList::ConstructParticle()
 {
-  G4cout << "============================================" << G4endl;
-  G4cout << "============================================" << G4endl;
-  G4cout << "===== PhysicsList::ConstructParticle() =====" << G4endl;
-  G4cout << "============================================" << G4endl;
-  G4cout << "============================================" << G4endl;
   fParticleList->ConstructParticle();
 }
 
@@ -124,13 +119,6 @@ void PhysicsList::ConstructParticle()
 
 void PhysicsList::ConstructProcess()
 {
-  //G4cout << "\033[1;31m" << G4endl;
-  G4cout << "===========================================" << G4endl;
-  G4cout << "===========================================" << G4endl;
-  G4cout << "===== PhysicsList::ConstructProcess() =====" << G4endl;
-  G4cout << "===========================================" << G4endl;
-  G4cout << "===========================================" << G4endl;
-  //G4cout << "\033[m" << G4endl;
   AddTransportation();
   fEmPhysicsList->ConstructProcess();
   fParticleList->ConstructProcess();

@@ -67,6 +67,15 @@ class DriftChamberHit : public G4VHit
     virtual std::vector<G4AttValue>* CreateAttValues() const;
     virtual void Print();
 
+    inline void SetTrackID(G4int id) { track_id_ = id; }
+    inline G4int GetTrackID() const { return track_id_; }
+
+    inline void SetParentID(G4int id) { parent_id_ = id; }
+    inline G4int GetParentID() const { return parent_id_; }
+
+    inline void SetParticleID(G4int id) { particle_id_ = id; }
+    inline G4int GetParticleID() const { return particle_id_; }
+
     inline void SetLayerID(G4int id) { layer_id_ = id; }
     inline G4int GetLayerID() const { return layer_id_; }
 
@@ -82,12 +91,19 @@ class DriftChamberHit : public G4VHit
     inline void SetMomentum(G4ThreeVector momentum) { momentum_ = momentum; }
     inline G4ThreeVector GetMomentum() const { return momentum_; }
     
+    inline void SetPolarization(G4ThreeVector polarization) { polarization_ = polarization; }
+    inline G4ThreeVector GetPolarization() const { return polarization_; }
+    
   private:
+    G4int track_id_;
+    G4int parent_id_;
+    G4int particle_id_;
     G4int layer_id_;
     G4double hit_time_;
     G4ThreeVector local_position_;
     G4ThreeVector global_position_;
     G4ThreeVector momentum_;
+    G4ThreeVector polarization_;
 };
 
 using DriftChamberHitsCollection = G4THitsCollection<DriftChamberHit>;

@@ -87,10 +87,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // Construct materials
   ConstructMaterials();
   auto air = G4Material::GetMaterial("G4_AIR");
+  auto vacuum = G4Material::GetMaterial("G4_Galactic");
   auto argonGas = G4Material::GetMaterial("G4_Ar");
   auto scintillator = G4Material::GetMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
   auto lead = G4Material::GetMaterial("G4_Pb");
+  auto carbon = G4Material::GetMaterial("G4_C");
 
   // Option to switch on/off checking of volumes overlaps
   //
@@ -102,36 +104,39 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto worldSolid 
     = new G4Box("worldBox",10.*m,3.*m,10.*m);
   auto worldLogical
-    = new G4LogicalVolume(worldSolid,air,"worldLogical");
+    = new G4LogicalVolume(worldSolid,vacuum,"worldLogical");
   auto worldPhysical
     = new G4PVPlacement(0,G4ThreeVector(),worldLogical,"worldPhysical",0,
         false,0,checkOverlaps);
 
   // target 
-  auto target_x = 10.*mm;
-  auto target_y = 10.*mm;
-  auto target_thickness = 10.*mm; 
+  auto target_size_x = 50.*mm;
+  auto target_size_y = 50.*mm;
+  auto target_thickness = 2.*mm; 
   auto targetSolid 
-    = new G4Box("targetBox",target_x/2.,target_y/2.,target_thickness/2.);
+    = new G4Box("targetBox",target_size_x/2.,target_size_y/2.,target_thickness/2.);
   auto targetLogical
-    = new G4LogicalVolume(targetSolid,air,"targetLogical");
+    = new G4LogicalVolume(targetSolid,carbon,"targetLogical");
   auto targetPhysical
     = new G4PVPlacement(0,G4ThreeVector(),targetLogical,"targetPhysical",
         worldLogical,false,0,checkOverlaps);
 
   // drift chamber (in)
+  auto dc_size_x = target_size_x;
+  auto dc_size_y = target_size_y;
   auto dc_thickness = 1.*mm;
   auto dcin_position = G4ThreeVector(0.,0.,-(target_thickness/2.+dc_thickness/2.+kSpace));
   auto dcin_Solid 
-    = new G4Box("dcin_Box",target_x/2.,target_y/2.,dc_thickness/2.);
+    = new G4Box("dcin_Box",dc_size_x/2.,dc_size_y/2.,dc_thickness/2.);
   auto dcin_Logical
     = new G4LogicalVolume(dcin_Solid,air,"dcin_Logical");
   auto dcin_Physical
     = new G4PVPlacement(0,dcin_position,dcin_Logical,"dcin_Physical",
         worldLogical,false,0,checkOverlaps);
   // wireplane
+  auto dc_wireplane_thickness = 1.*nm;
   auto dcin_wireplane_solid
-    = new G4Box("dcin_wireplane_box", target_x/2., target_y/2., 0.1*mm/2.);
+    = new G4Box("dcin_wireplane_box", dc_size_x/2., dc_size_y/2., dc_wireplane_thickness/2.);
   dcin_wireplane_logical_
     = new G4LogicalVolume(dcin_wireplane_solid,argonGas,"dcin_wireplane_logical");
   auto dcin_wireplane_physical
@@ -141,7 +146,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // drift chamber (out)
   auto dcout_position = -dcin_position;
   auto dcout_Solid 
-    = new G4Box("dcout_Box",target_x/2.,target_y/2.,dc_thickness/2.);
+    = new G4Box("dcout_Box",dc_size_x/2.,dc_size_y/2.,dc_thickness/2.);
   auto dcout_Logical
     = new G4LogicalVolume(dcout_Solid,air,"dcout_Logical");
   auto dcout_Physical
@@ -149,7 +154,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         worldLogical, false,0,checkOverlaps);
   // wireplane
   auto dcout_wireplane_solid
-    = new G4Box("dcout_wireplane_box", target_x/2., target_y/2., 0.1*mm/2.);
+    = new G4Box("dcout_wireplane_box", dc_size_x/2., dc_size_y/2., dc_wireplane_thickness/2.);
   dcout_wireplane_logical_
     = new G4LogicalVolume(dcout_wireplane_solid,argonGas,"dcout_wireplane_logical");
   auto dcout_wireplane_physical
@@ -223,6 +228,13 @@ void DetectorConstruction::ConstructMaterials()
 
   // Lead
   nistManager->FindOrBuildMaterial("G4_Pb");
+
+  // Carbon
+  nistManager->FindOrBuildMaterial("G4_C");
+
+  // Vacuum "Galactic"
+  nistManager->FindOrBuildMaterial("G4_Galactic");
+
 
   G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;

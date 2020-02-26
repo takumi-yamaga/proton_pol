@@ -53,7 +53,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   proton_ = particleTable->FindParticle("proton");
   
   // default particle kinematics
-  particlegun_->SetParticlePosition(G4ThreeVector(0.,0.,-20.*mm));
+  particlegun_->SetParticlePosition(G4ThreeVector(0.,0.,-50.*mm));
   particlegun_->SetParticleDefinition(proton_);
   
   // define commands for this class

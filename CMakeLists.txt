@@ -4,6 +4,12 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(proton_pol)
 
 #----------------------------------------------------------------------------
+# Setup compile options
+#
+set(CMAKE_CSS_FLAGS_DEBUG "-g3 -O0")
+set(CMAKE_CSS_FLAGS_RELEASE "-O2")
+
+#----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
 # to build a batch mode only executable
@@ -47,6 +53,7 @@ set(proton_pol_SCRIPTS
   run.png
   init.mac 
   init_vis.mac 
+  run0.mac 
   run1.mac 
   run2.mac 
   vis.mac

@@ -110,8 +110,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         false,0,checkOverlaps);
 
   // target 
-  auto target_size_x = 10.*mm;
-  auto target_size_y = 10.*mm;
+  auto target_size_x = 50.*mm;
+  auto target_size_y = 50.*mm;
   auto target_thickness = 30.*mm; 
   auto targetSolid 
     = new G4Box("targetBox",target_size_x/2.,target_size_y/2.,target_thickness/2.);

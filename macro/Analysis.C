@@ -98,7 +98,11 @@ void DrawHistograms(){
   Draw(hist_1d);
   canvas->Print(pdf_name);
 
-  // theta
+  // --------------
+  gPad->SetLogy(0);
+  // --------------
+  
+  // phi
   hist_1d = (TH1F*)output_file->Get("phi_selected");
   Draw(hist_1d);
   canvas->Print(pdf_name);

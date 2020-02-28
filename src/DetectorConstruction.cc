@@ -93,6 +93,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto csI = G4Material::GetMaterial("G4_CESIUM_IODIDE");
   auto lead = G4Material::GetMaterial("G4_Pb");
   auto carbon = G4Material::GetMaterial("G4_C");
+  auto hydrogen = new G4Material("hydrogne", 1., 1.01*g/mole, 1.*g/cm3);
 
   // Option to switch on/off checking of volumes overlaps
   //
@@ -116,7 +117,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   auto targetSolid 
     = new G4Box("targetBox",target_size_x/2.,target_size_y/2.,target_thickness/2.);
   auto targetLogical
-    = new G4LogicalVolume(targetSolid,carbon,"targetLogical");
+    = new G4LogicalVolume(targetSolid,hydrogen,"targetLogical");
   auto targetPhysical
     = new G4PVPlacement(0,G4ThreeVector(),targetLogical,"targetPhysical",
         worldLogical,false,0,checkOverlaps);

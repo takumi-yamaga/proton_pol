@@ -52,6 +52,7 @@ set(proton_pol_SCRIPTS
   init_vis.mac 
   vis.mac
   run.mac 
+  run.png
   test.root
   )
 
@@ -67,8 +68,8 @@ endforeach()
 # Copy all macros to the build directory.
 #
 set(proton_pol_MACRO
-  Analysis.c 
-  DrawToos.h 
+  Analysis.C 
+  DrawTools.h 
   )
 
 foreach(_script ${proton_pol_MACRO})

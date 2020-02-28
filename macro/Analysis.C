@@ -105,6 +105,7 @@ void DrawHistograms(){
   // phi
   hist_1d = (TH1F*)output_file->Get("phi_selected");
   Draw(hist_1d);
+  hist_1d->SetMinimum(0);
   canvas->Print(pdf_name);
 
   // --------------

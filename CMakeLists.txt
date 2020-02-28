@@ -52,12 +52,39 @@ set(proton_pol_SCRIPTS
   init_vis.mac 
   vis.mac
   run.mac 
+  proton_pol.root
   )
 
 foreach(_script ${proton_pol_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()
+
+#----------------------------------------------------------------------------
+# Copy all macros to the build directory.
+#
+set(proton_pol_MACRO
+  Analysis.c 
+  )
+
+foreach(_script ${proton_pol_MACRO})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/macro/${_script}
+    ${PROJECT_BINARY_DIR}/macro/${_script}
+    COPYONLY
+    )
+endforeach()
+set(proton_pol_FIG
+  analysis.pdf 
+  )
+
+foreach(_script ${proton_pol_FIG})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/fig/${_script}
+    ${PROJECT_BINARY_DIR}/fig/${_script}
     COPYONLY
     )
 endforeach()

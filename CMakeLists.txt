@@ -52,7 +52,7 @@ set(proton_pol_SCRIPTS
   init_vis.mac 
   vis.mac
   run.mac 
-  proton_pol.root
+  test.root
   )
 
 foreach(_script ${proton_pol_SCRIPTS})

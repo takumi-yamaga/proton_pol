@@ -68,6 +68,7 @@ endforeach()
 #
 set(proton_pol_MACRO
   Analysis.c 
+  DrawToos.h 
   )
 
 foreach(_script ${proton_pol_MACRO})

@@ -12,4 +12,4 @@
 # Defaults:
 # armAngle 30. deg
 # field value: 1.0*tesla
-/run/beamOn 2000
+/run/beamOn 1000000

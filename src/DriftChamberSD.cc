@@ -75,6 +75,9 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
   auto particle_id = track->GetParticleDefinition()->GetPDGEncoding();
   if(particle_id != 2212) return true;
+
+  auto parent_id = track->GetParentID();
+  if(parent_id != 0) return true;
   
   auto preStepPoint = step->GetPreStepPoint();
 
@@ -93,7 +96,7 @@ G4bool DriftChamberSD::ProcessHits(G4Step* step, G4TouchableHistory*)
   hit->SetMomentum(preStepPoint->GetMomentum());
   hit->SetPolarization(track->GetPolarization());
   hit->SetTrackID(track->GetTrackID());
-  hit->SetParentID(track->GetParentID());
+  hit->SetParentID(parent_id);
   hit->SetParticleID(particle_id);
   
   fHitsCollection->insert(hit);

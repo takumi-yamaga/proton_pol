@@ -196,24 +196,23 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
 
   // ======================================================
-  // Analysis =============================================
+  // Generated ============================================
   // ======================================================
-  if(dcout_has_hit){
-    G4double momentum = dcout_momentum.mag()/MeV;
-    G4double theta = dcout_momentum.theta()/deg;
-    G4double phi   = dcout_momentum.phi()/deg;
-    if(10.<theta&&theta<20.){
-      analysisManager->FillH1(analysis_histogram_id_[0], theta);
-      analysisManager->FillH1(analysis_histogram_id_[1], phi);
-      analysisManager->FillH1(analysis_histogram_id_[2], cos(phi*deg));
-      analysisManager->FillH1(analysis_histogram_id_[3], sin(phi*deg));
-      analysisManager->FillH2(analysis_histogram_id_[4], theta, cos(phi*deg));
-      analysisManager->FillH2(analysis_histogram_id_[5], theta, sin(phi*deg));
-    }
-  }
-  // ======================================================
-  // ======================================================
-
+  ProtonDistributionGenerator::GetInstance().Generate();
+  G4double momentum[3]={0.};
+  G4double normal[3]={0.};
+  G4double reference[3]={0.};
+  ProtonDistributionGenerator::GetInstance().GetEvent(momentum,normal,reference);
+  
+  analysisManager->FillNtupleFColumn(14,(G4float)momentum[0]);
+  analysisManager->FillNtupleFColumn(15,(G4float)momentum[1]);
+  analysisManager->FillNtupleFColumn(16,(G4float)momentum[2]);
+  analysisManager->FillNtupleFColumn(17,(G4float)normal[0]);
+  analysisManager->FillNtupleFColumn(18,(G4float)normal[1]);
+  analysisManager->FillNtupleFColumn(19,(G4float)normal[2]);
+  analysisManager->FillNtupleFColumn(20,(G4float)reference[0]);
+  analysisManager->FillNtupleFColumn(21,(G4float)reference[1]);
+  analysisManager->FillNtupleFColumn(22,(G4float)reference[2]);
 
   // ======================================================
   // Fill Tree ============================================

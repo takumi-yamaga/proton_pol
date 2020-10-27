@@ -30,6 +30,7 @@
 #ifndef PrimaryGeneratorAction_h
 #define PrimaryGeneratorAction_h 1
 
+#include "ProtonDistributionGenerator.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 

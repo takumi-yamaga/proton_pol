@@ -101,6 +101,16 @@ RunAction::RunAction()
   analysisManager->CreateNtupleFColumn("dcout_momentum_y"); // column Id =12
   analysisManager->CreateNtupleFColumn("dcout_momentum_z"); // column Id =13
 
+  analysisManager->CreateNtupleFColumn("generate_momentum_x"); // column Id =14
+  analysisManager->CreateNtupleFColumn("generate_momentum_y"); // column Id =15
+  analysisManager->CreateNtupleFColumn("generate_momentum_z"); // column Id =16
+  analysisManager->CreateNtupleFColumn("generate_normal_x");   // column Id =17
+  analysisManager->CreateNtupleFColumn("generate_normal_y");   // column Id =18
+  analysisManager->CreateNtupleFColumn("generate_normal_z");   // column Id =19
+  analysisManager->CreateNtupleFColumn("generate_reference_x");// column Id =20
+  analysisManager->CreateNtupleFColumn("generate_reference_y");// column Id =21
+  analysisManager->CreateNtupleFColumn("generate_reference_z");// column Id =22
+
   analysisManager->FinishNtuple();
 }
 

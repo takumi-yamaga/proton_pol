@@ -30,6 +30,7 @@
 #ifndef EventAction_h
 #define EventAction_h 1
 
+#include "ProtonDistributionGenerator.hh"
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"

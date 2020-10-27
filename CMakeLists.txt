@@ -28,6 +28,15 @@ endif()
 include(${Geant4_USE_FILE})
 
 #----------------------------------------------------------------------------
+# include Root
+#
+list(APPEND CMAKE_MODULE_PATH $ENV{ROOTSYS}/cmake)
+find_package(ROOT)
+include_directories(${ROOT_INCLUDE_DIR})
+include_directories($ENV{ROOTSYS}/include)
+#
+
+#----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
 #
@@ -40,7 +49,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(execute-proton_pol proton_pol.cc ${sources} ${headers})
-target_link_libraries(execute-proton_pol ${Geant4_LIBRARIES})
+target_link_libraries(execute-proton_pol ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory.

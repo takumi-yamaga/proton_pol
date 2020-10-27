@@ -37,13 +37,15 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
+#include "TMath.h"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),     
   particlegun_(nullptr), messenger_(nullptr), 
   proton_(nullptr),
-  momentum_(200.*MeV),
+  momentum_(600.*MeV),
   randomize_primary_(false)
 {
   G4int num_particle = 1;
@@ -53,7 +55,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   proton_ = particleTable->FindParticle("proton");
   
   // default particle kinematics
-  particlegun_->SetParticlePosition(G4ThreeVector(0.,0.,-50.*mm));
+  particlegun_->SetParticlePosition(G4ThreeVector(0.*mm,0.*mm,0.*mm));
   particlegun_->SetParticleDefinition(proton_);
   
   // define commands for this class
@@ -72,19 +74,30 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 {
+  ProtonDistributionGenerator::GetInstance().Generate();
+  G4double momentum[3]={0.};
+  G4double normal[3]={0.};
+  G4double reference[3]={0.};
+  ProtonDistributionGenerator::GetInstance().GetEvent(momentum,normal,reference);
+  
+  G4ThreeVector vec_momentum(momentum[0],momentum[1],momentum[2]);
+  G4ThreeVector vec_normal(normal[0],normal[1],normal[2]);
+  G4ThreeVector vec_reference(normal[0],normal[1],normal[2]);
+
   G4ParticleDefinition* particle = proton_;  
   particlegun_->SetParticleDefinition(proton_);
 
-  auto pp = momentum_;
+  auto pp = vec_momentum.mag()*GeV;
   auto mass = particle->GetPDGMass();
   auto ekin = std::sqrt(pp*pp+mass*mass)-mass;
   particlegun_->SetParticleEnergy(ekin);
 
-  auto direction = G4ThreeVector(0.,0.,1.);
-  particlegun_->SetParticleMomentumDirection(direction);
+  auto cos_theta = vec_momentum.dot(vec_normal) / vec_momentum.mag() / vec_normal.mag();
+  auto sin_theta = sqrt(1.-cos_theta*cos_theta);
+  auto phi = G4UniformRand() * 2. * TMath::Pi();
 
-  auto polarization = G4ThreeVector(0.,1.,0.);
-  particlegun_->SetParticlePolarization(polarization);
+  auto direction = G4ThreeVector(sin_theta*cos(phi),sin_theta*sin(phi),cos_theta);
+  particlegun_->SetParticleMomentumDirection(direction);
 
   particlegun_->GeneratePrimaryVertex(event);
 }
